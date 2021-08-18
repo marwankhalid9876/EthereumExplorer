@@ -10,6 +10,8 @@ import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.protocol.ipc.IpcService;
+import org.web3j.protocol.ipc.WindowsIpcService;
 
 import java.io.IOException;
 import java.lang.String;
@@ -19,11 +21,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
+    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws ExecutionException, InterruptedException, IOException {
-        EthBlockNumber result = web3.ethBlockNumber().sendAsync().get();
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(result.getBlockNumber()),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(20000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -156,8 +157,6 @@ public class EthereumExplorer {
                 case "block": return queryBlock(sqltermsArray, selectElements);
             }
         }
-
-
         System.out.println("Invalid query!");
         return null;
     }
@@ -186,12 +185,13 @@ public class EthereumExplorer {
 
 
     public static ArrayList<ArrayList<Object>> queryTransactions(Object[] conditions, Vector<String> selectElements) throws IOException, ExecutionException, InterruptedException {
-        int j=0;
         EthBlock.Block current = getLastBlock();
-        EthBlock.Block oldCurrent = current;
         System.out.println("Block " +  getLastBlock().getNumber());
+        int j=0;
         ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
         do{
+//            if(j%50==0)
+//               System.out.println(current.getNumber());
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
                 Transaction t = (Transaction) bigList.get(i).get();
@@ -217,8 +217,9 @@ public class EthereumExplorer {
                         filteredList.get(filteredList.size()-1).add(selectElementsValuesForTransaction(t,selectElements));
                 }
             }
+            current = getPreviousBlock(current);
             j++;
-        }while((current = getPreviousBlock(current)) != oldCurrent && j<15);
+        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<684435);
         return filteredList;
     }
     public static void evaluateBrackets(Vector<Object> conditionsSatisfied)
@@ -330,15 +331,14 @@ public class EthereumExplorer {
     }
 
     public static ArrayList<ArrayList<Object>> queryBlock (Object[] conditions, Vector<String> selectElements) throws IOException, ExecutionException, InterruptedException {
-        int j=0;
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
-        System.out.println("Block " +  getLastBlock().getNumber());
         ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
+        int j=0;
         do{
             oldCurrent = current;
-
-            System.out.println(current.getNumber());
+////            if(j%50==0)
+//                System.out.println(current.getNumber());
             Vector<Object> conditionsSatisfied = new Vector<>();//{true,false,true,..}
 
             for(int k=0; k<conditions.length; k++)
@@ -352,21 +352,23 @@ public class EthereumExplorer {
             //if the where condition was true for this transaction
             if(conditionsResult(conditionsSatisfied))
             {
-                filteredList.add(new ArrayList<>());
                 //case1: selectElements contains only *
                 if(selectElements.get(0).equals("*"))
+                {
+                    filteredList.add(new ArrayList<>());
                     filteredList.get(filteredList.size()-1).add(current);
+                }
                 else //case2: there are select elements
-                    filteredList.get(filteredList.size()-1).add(selectElementsValuesForBlock(current,selectElements));
+                    filteredList.add(selectElementsValuesForBlock(current,selectElements));
             }
-
             j++;
-        }while((current = getPreviousBlock(current)) != oldCurrent && j<15);
+            current = getPreviousBlock(current);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<30000);
         return filteredList;
     }
 
-    public static ArrayList<String> selectElementsValuesForBlock(EthBlock.Block c, Vector<String> selectElements) {
-        ArrayList<String> selectValues = new ArrayList<>();
+    public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, Vector<String> selectElements) {
+        ArrayList<Object> selectValues = new ArrayList<>();
         for(int i=0; i<selectElements.size(); i++)
         {
             switch(selectElements.get(i))
@@ -421,32 +423,13 @@ public class EthereumExplorer {
 //    }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        ArrayList<ArrayList<Object>> arr = parse("select blockheight, difficulty from block where ((BlockHeight = 13011771 or difficulty = 7737160555279954)) and (parenthash= '0x0d96d1eee639bbeb58f74c9103346219c4a93db2c06eda991bed545632fdbe37')");
+        ArrayList<ArrayList<Object>> arr = parse("select * from block ");
         System.out.println(arr.size());
+        int i=0;
         for(Object selectElement : arr)
         {
-            System.out.println(selectElement);
+            i++;
+            System.out.println((i) + "" + selectElement);
         }
-//
-//        Vector<Object> toEvaluateBrackets = new Vector<>();
-//        toEvaluateBrackets.add("(");
-//        toEvaluateBrackets.add(true);
-//        toEvaluateBrackets.add("and");
-//        toEvaluateBrackets.add(false);
-//        toEvaluateBrackets.add(")");
-//        toEvaluateBrackets.add("or");
-//        toEvaluateBrackets.add("(");
-//        toEvaluateBrackets.add(true);
-//        toEvaluateBrackets.add("or");
-//        toEvaluateBrackets.add("(");
-//        toEvaluateBrackets.add(true);
-//        toEvaluateBrackets.add("and");
-//        toEvaluateBrackets.add(false);
-//        toEvaluateBrackets.add(")");
-//        toEvaluateBrackets.add(")");
-//        System.out.println(toEvaluateBrackets);
-//        evaluateBrackets(toEvaluateBrackets);
-//        System.out.println(conditionsResult(toEvaluateBrackets));
-
     }
 }
