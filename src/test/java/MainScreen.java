@@ -203,7 +203,17 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchBox2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        try {
+            AdvancedScreen as = new AdvancedScreen(SearchBox2.getText(),this);
+            as.setVisible(true);
+            setVisible(false);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

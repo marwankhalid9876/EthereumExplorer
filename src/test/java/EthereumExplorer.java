@@ -21,10 +21,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
+    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
 
     public static EthBlock.Block getLastBlock() throws ExecutionException, InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(20000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(13000000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -219,7 +219,7 @@ public class EthereumExplorer {
             }
             current = getPreviousBlock(current);
             j++;
-        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<684435);
+        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<100);
         return filteredList;
     }
     public static void evaluateBrackets(Vector<Object> conditionsSatisfied)
@@ -334,6 +334,12 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
         ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
+        Vector<String> x = MyListener.selectElements;
+        ArrayList<Object> attNames = new ArrayList<Object>();
+        for(String s : x){
+            attNames.add(s);
+        }
+        filteredList.add(attNames);
         int j=0;
         do{
             oldCurrent = current;
@@ -363,7 +369,7 @@ public class EthereumExplorer {
             }
             j++;
             current = getPreviousBlock(current);
-        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<30000);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<25);
         return filteredList;
     }
 
@@ -423,7 +429,7 @@ public class EthereumExplorer {
 //    }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        ArrayList<ArrayList<Object>> arr = parse("select * from block ");
+        ArrayList<ArrayList<Object>> arr = parse("select hash from transaction where value = 0 ");
         System.out.println(arr.size());
         int i=0;
         for(Object selectElement : arr)
