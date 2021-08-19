@@ -2,24 +2,21 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Scanner;
-import java.util.Vector;
+import java.util.*;
 
 public class MyListener extends MySqlParserBaseListener{
 
     public static String statement="";
     public static String entity = ""; //--
-    public static Vector<String> selectElements=new Vector<>();//--
-    public static Vector<Object> expressionVector=new Vector<>(); //UPDATED
+    public static ArrayList<String> selectElements=new ArrayList<>();//--
+    public static ArrayList<Object> expressionList=new ArrayList<>(); //UPDATED
 
 
 
     @Override public void enterSqlStatement(MySqlParser.SqlStatementContext ctx) {
         statement="";
         entity="";
-        expressionVector=new Vector<>();
+        expressionList=new ArrayList<>();
 
 
     }
@@ -29,7 +26,7 @@ public class MyListener extends MySqlParserBaseListener{
 
     }
     @Override public void enterLogicalOperator(MySqlParser.LogicalOperatorContext ctx) {
-        expressionVector.add(ctx.getText());
+        expressionList.add(ctx.getText());
     }
 
     @Override public void enterBinaryComparasionPredicate(MySqlParser.BinaryComparasionPredicateContext ctx) {
@@ -45,7 +42,7 @@ public class MyListener extends MySqlParserBaseListener{
         theTerm.setAttribute(columnName);
         theTerm.setOperator(operator);
         theTerm.setValue(value);
-        expressionVector.add(theTerm);
+        expressionList.add(theTerm);
     }
 
     public void enterTableSources(MySqlParser.TableSourcesContext ctx) {
@@ -64,11 +61,11 @@ public class MyListener extends MySqlParserBaseListener{
 
     }
     @Override public void enterNestedExpressionAtom(MySqlParser.NestedExpressionAtomContext ctx) {
-        expressionVector.add("(");
+        expressionList.add("(");
     }
 
     @Override public void exitNestedExpressionAtom(MySqlParser.NestedExpressionAtomContext ctx) {
-        expressionVector.add(")");
+        expressionList.add(")");
     }
 
 

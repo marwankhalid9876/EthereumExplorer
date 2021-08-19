@@ -32,7 +32,7 @@ public class AdvancedScreen extends JFrame {
         initComponents();
         parentFrame = m;
         QueryResult.setText("Query Results: ("+key+")");
-        ArrayList<ArrayList<Object>> everything = EthereumExplorer.parse(key);
+        ArrayList<ArrayList> everything = EthereumExplorer.parse(key);
         //DefaultTableModel tm = new DefaultTableModel(everything.size(),everything.get(0).size()+1);
         ArrayList<Object> attNames = everything.remove(0);
         Object[][] outer = new Object[everything.size()][everything.get(0).size()+1];

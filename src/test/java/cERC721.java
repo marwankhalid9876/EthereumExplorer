@@ -3,7 +3,40 @@ public class cERC721 {
     String to;
     int ID;
     double Amount;
-    public cERC721(String f,String t ,int i,double A){
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public double getAmount() {
+        return Amount;
+    }
+
+    public void setAmount(double amount) {
+        Amount = amount;
+    }
+
+    public cERC721(String f, String t , int i, double A){
         from=f;
         to=t;
         Amount=A;

@@ -21,9 +21,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
+    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
-    public static EthBlock.Block getLastBlock() throws ExecutionException, InterruptedException, IOException {
+    public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
         EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(13000000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
@@ -122,7 +122,7 @@ public class EthereumExplorer {
         return false;
     }
 
-    public static ArrayList<ArrayList<Object>> parse(String code ) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> parse(String code ) throws IOException, ExecutionException, InterruptedException {
         // Before looking at this method ,Look at Mylistener.java file as it is subclass of MySqlParserBaseListener.java
         // in Mylistener.java you will find instance variables I called here and methods of entering grammar rules I implemented that overrides the super class MySqlParserBaseListener.java
         //If you will call this method,You have to disable scala plugin that it is added lately in intellij ,for that go to file->settings->plugins->(search for scala and disable it)
@@ -142,26 +142,52 @@ public class EthereumExplorer {
         String cluster = "";
         if (MyListener.statement.equals("select")) {
             colNameVal = new Hashtable<>();
-            System.out.println("term " + MyListener.expressionVector);
-            int sizeOfArray = MyListener.expressionVector.size();
+            System.out.println("term " + MyListener.expressionList);
+            int sizeOfArray = MyListener.expressionList.size();
             Object[] sqltermsArray = new Object[sizeOfArray];
             for (int i = 0; i < sizeOfArray; i++) {
-                sqltermsArray[i] = MyListener.expressionVector.get(i);
+                sqltermsArray[i] = MyListener.expressionList.get(i);
             }
-            Vector<String> selectElements = MyListener.selectElements;
+            ArrayList<String> selectElements = MyListener.selectElements;
 
 
             switch (MyListener.entity)
             {
                 case "transaction": return queryTransactions(sqltermsArray, selectElements);
                 case "block": return queryBlock(sqltermsArray, selectElements);
+                case "erc721":
+                case "erc20":
+                    for(int i=0; i<selectElements.size(); i++)
+                    {
+                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
+                                !selectElements.get(i).equals("amount"))
+                        {
+                            System.out.println("Invalid select elements!");
+                            return null;
+                        }
+                    }
+                    for(int i=0; i<sqltermsArray.length; i++)
+                    {
+                        if(!(sqltermsArray[i] instanceof Condition))
+                        {
+                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("from") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
+                                System.out.println("Invalid where conditions!");
+                            return null;
+                        }
+                    }
+                    ArrayList<ArrayList> selectElementsAndConditions = new ArrayList<>();
+                    selectElementsAndConditions.add(MyListener.selectElements);
+                    selectElementsAndConditions.add(MyListener.expressionList);
+                    return selectElementsAndConditions;
             }
         }
         System.out.println("Invalid query!");
         return null;
     }
 
-    public static boolean evaluateCondition(String operator, BigInteger operand1, BigInteger operand2) {
+    public static boolean evaluateCondition(String operator, Comparable operand1, Comparable operand2) {
         switch (operator) {
             case "=":
                 return operand1.equals(operand2);
@@ -184,11 +210,11 @@ public class EthereumExplorer {
 
 
 
-    public static ArrayList<ArrayList<Object>> queryTransactions(Object[] conditions, Vector<String> selectElements) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> queryTransactions(Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException {
         EthBlock.Block current = getLastBlock();
         System.out.println("Block " +  getLastBlock().getNumber());
         int j=0;
-        ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
+        ArrayList<ArrayList> filteredList = new ArrayList<>();
         do{
 //            if(j%50==0)
 //               System.out.println(current.getNumber());
@@ -219,7 +245,7 @@ public class EthereumExplorer {
             }
             current = getPreviousBlock(current);
             j++;
-        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<100);
+        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<684435);
         return filteredList;
     }
     public static void evaluateBrackets(Vector<Object> conditionsSatisfied)
@@ -247,7 +273,7 @@ public class EthereumExplorer {
         conditionsSatisfied.add(i,conditionsResult(toBeEvaluated));
     }
 
-    private static ArrayList<String> selectElementsValuesForTransaction(Transaction t, Vector<String> selectElements) {
+    private static ArrayList<String> selectElementsValuesForTransaction(Transaction t, ArrayList<String> selectElements) {
         ArrayList<String> selectValues = new ArrayList<>();
         for(int i=0; i<selectElements.size(); i++)
         {
@@ -330,16 +356,10 @@ public class EthereumExplorer {
         return (boolean) conditionsSatisfied.get(0);
     }
 
-    public static ArrayList<ArrayList<Object>> queryBlock (Object[] conditions, Vector<String> selectElements) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> queryBlock (Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
-        ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
-        Vector<String> x = MyListener.selectElements;
-        ArrayList<Object> attNames = new ArrayList<Object>();
-        for(String s : x){
-            attNames.add(s);
-        }
-        filteredList.add(attNames);
+        ArrayList<ArrayList> filteredList = new ArrayList<>();
         int j=0;
         do{
             oldCurrent = current;
@@ -369,11 +389,11 @@ public class EthereumExplorer {
             }
             j++;
             current = getPreviousBlock(current);
-        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<25);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<30);
         return filteredList;
     }
 
-    public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, Vector<String> selectElements) {
+    public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, ArrayList<String> selectElements) {
         ArrayList<Object> selectValues = new ArrayList<>();
         for(int i=0; i<selectElements.size(); i++)
         {
@@ -395,44 +415,12 @@ public class EthereumExplorer {
         return selectValues;
     }
 
-//    public static ArrayList<ArrayList<Object>> queryAccount (Condition[] conditions, String[] operators, Vector<String> selectElements) throws IOException, ExecutionException, InterruptedException {
-//        int j=0;
-//        EthBlock.Block current = getLastBlock();
-//        EthBlock.Block oldCurrent;
-//        System.out.println("Block " +  getLastBlock().getNumber());
-//        ArrayList<ArrayList<Object>> filteredList = new ArrayList<>();
-//        do{
-//            oldCurrent = current;
-//
-//
-//            Vector<Boolean> conditionsSatisfied = new Vector<>();//{true,false,true,..}
-////                System.out.println(t.getHash() + " " + t.getValue());
-//            for(int k=0; k<conditions.length; k++)
-//            {
-//                conditionsSatisfied.add(checkBlockOnCondition(current,conditions[k]));
-//            }
-//
-//            //if the where condition was true for this transaction
-//            if(conditionsResult(conditionsSatisfied,operators))
-//            {
-//                filteredList.add(new ArrayList<>());
-//                //case1: selectElements contains only *
-//                if(selectElements.get(0).equals("*"))
-//                    filteredList.get(filteredList.size()-1).add(current);
-//                else //case2: there are select elements
-//                    filteredList.get(filteredList.size()-1).add(selectElementsValuesForBlock(current,selectElements));
-//            }
-//
-//            j++;
-//        }while((current = getPreviousBlock(current)) != oldCurrent && j<3);
-//        return filteredList;
-//    }
 
-    public static ArrayList<cERC20> summary20(ArrayList<Integer> x,ArrayList<String> ty,String ca,String m) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> summary20(ArrayList<Integer> x,ArrayList<String> ty,String ca,String m, ArrayList selectElements, ArrayList conditions) throws IOException, ExecutionException, InterruptedException {
         int j=0;
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
-        ArrayList<cERC20> R = new ArrayList<cERC20>();
+        ArrayList<ArrayList> R = new ArrayList<ArrayList>();
         do{
             System.out.println("Hopppppaaaaaaaaaaa" + j++ );
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
@@ -443,10 +431,30 @@ public class EthereumExplorer {
                         if(t.getTo().equals(ca))
                             if( t.getInput()!=null){
                                 if (t.getInput().substring(0,10).equals(m)) {
-                                    //  System.out.println("aiii");
                                     ArrayList<String>tr=fetchcontractdata(x,t,ty);
                                     cERC20 n=new cERC20(t.getFrom(),tr.get(0),Double.parseDouble(tr.get(1)));
-                                    R.add(n);
+                                    Vector<Object> conditionsSatisfied = new Vector<>();//{true,false,true,..}
+
+                                    for(int k=0; k<conditions.size(); k++)
+                                    {
+                                        if(conditions.get(k) instanceof Condition)
+                                            conditionsSatisfied.add(checkERC20OnCondition(n,(Condition) conditions.get(k)));
+                                        else
+                                            conditionsSatisfied.add(conditions.get(k));
+                                    }
+                                    evaluateBrackets(conditionsSatisfied);
+                                    //if the where condition was true for this transaction
+                                    if(conditionsResult(conditionsSatisfied))
+                                    {
+                                        //case1: selectElements contains only *
+                                        if(selectElements.get(0).equals("*"))
+                                        {
+                                            R.add(new ArrayList<>());
+                                            R.get(R.size()-1).add(n);
+                                        }
+                                        else //case2: there are select elements
+                                            R.add(selectElementsValuesForERC20(n,selectElements));
+                                    }
                                 }
                             }
             }}
@@ -454,14 +462,42 @@ public class EthereumExplorer {
         return R;
     }
 
-    public static ArrayList<cERC721> summary721(ArrayList<Integer> x,ArrayList<Integer> x2,ArrayList<String> ty,ArrayList<String>M,String ca) throws IOException, ExecutionException, InterruptedException {
+    private static ArrayList selectElementsValuesForERC20(cERC20 n, ArrayList selectElements) {
+        ArrayList<String> selectValues = new ArrayList<>();
+        for(int i=0; i<selectElements.size(); i++)
+        {
+            switch(selectElements.get(i).toString())
+            {
+                case "fromaccount": selectValues.add(n.getFrom()); break;
+                case "toaccount": selectValues.add(n.getTo()); break;
+                case "amount": selectValues.add(((Double)n.getAmount()).toString()); break;
+                default:
+                    System.out.println("The typed select elements are not valid for this token!");
+                    return null;
+            }
+        }
+        return selectValues;
+    }
+
+    private static Object checkERC20OnCondition(cERC20 n, Condition c) {
+        switch(c.getAttribute()){
+            case "fromaccount": return c.getValue().equals(n.getFrom());
+            case "toaccount": return c.getValue().equals(n.getTo());
+            case "amount": return evaluateCondition(c.getOperator(), n.getAmount(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
+
+            default:
+                System.out.println("You have entered an invalid where condition!");
+        }
+        return false;
+    }
+
+    public static ArrayList<ArrayList> summary721(ArrayList<Integer> x,ArrayList<Integer> x2,ArrayList<String> ty,ArrayList<String>M,String ca, ArrayList selectElements, ArrayList conditions) throws IOException, ExecutionException, InterruptedException {
         int j=0;
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
-        ArrayList<cERC721> R = new ArrayList<cERC721>();
+        ArrayList<ArrayList> R = new ArrayList<ArrayList>();
 
         do{
-            System.out.println("Hopppppaaaaaaaaaaa" + j++ );
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
                 Transaction t = (Transaction) bigList.get(i).get();
@@ -480,13 +516,65 @@ public class EthereumExplorer {
                                     ArrayList<String>tr=fetchcontractdata721(x,x2,t,ty,M);
 
                                     cERC721 n=new cERC721(tr.get(0),tr.get(1),Integer.parseInt(tr.get(2)),t.getValue().doubleValue()/Math.pow(10,18));
-                                    R.add(n);
+
+                                    Vector<Object> conditionsSatisfied = new Vector<>();//{true,false,true,..}
+
+                                    for(int k=0; k<conditions.size(); k++)
+                                    {
+                                        if(conditions.get(k) instanceof Condition)
+                                            conditionsSatisfied.add(checkERC721OnCondition(n,(Condition) conditions.get(k)));
+                                        else
+                                            conditionsSatisfied.add(conditions.get(k));
+                                    }
+                                    evaluateBrackets(conditionsSatisfied);
+                                    //if the where condition was true for this transaction
+                                    if(conditionsResult(conditionsSatisfied))
+                                    {
+                                        //case1: selectElements contains only *
+                                        if(selectElements.get(0).equals("*"))
+                                        {
+                                            R.add(new ArrayList<>());
+                                            R.get(R.size()-1).add(n);
+                                        }
+                                        else //case2: there are select elements
+                                            R.add(selectElementsValuesForERC721(n,selectElements));
+                                    }
                                 }
                             }
             }}
         while((current = getPreviousBlock(current)) != oldCurrent && j<10);
         return R;
     }
+
+    private static Object checkERC721OnCondition(cERC721 n, Condition c) {
+        switch(c.getAttribute()){
+            case "fromaccount": return c.getValue().equals(n.getFrom());
+            case "toaccount": return c.getValue().equals(n.getTo());
+            case "amount": return evaluateCondition(c.getOperator(), n.getAmount(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
+
+            default:
+                System.out.println("You have entered an invalid where condition!");
+        }
+        return false;
+    }
+
+    private static ArrayList selectElementsValuesForERC721(cERC721 n, ArrayList selectElements) {
+        ArrayList<String> selectValues = new ArrayList<>();
+        for(int i=0; i<selectElements.size(); i++)
+        {
+            switch(selectElements.get(i).toString())
+            {
+                case "fromaccount": selectValues.add(n.getFrom()); break;
+                case "toaccount": selectValues.add(n.getTo()); break;
+                case "amount": selectValues.add(((Double)n.getAmount()).toString()); break;
+                default:
+                    System.out.println("The typed select elements are not valid for this token!");
+                    return null;
+            }
+        }
+        return selectValues;
+    }
+
     public static ArrayList<String> fetchcontractdata(ArrayList<Integer> x,Transaction t,ArrayList<String> ty){
         String s=t.getInput();
         s=s.substring(10);
@@ -568,7 +656,7 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        ArrayList<ArrayList<Object>> arr = parse("select hash from transaction where value = 0 ");
+        ArrayList<ArrayList> arr = parse("select * from block");
         System.out.println(arr.size());
         int i=0;
         for(Object selectElement : arr)
