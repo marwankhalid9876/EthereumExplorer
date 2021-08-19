@@ -428,6 +428,145 @@ public class EthereumExplorer {
 //        return filteredList;
 //    }
 
+    public static ArrayList<cERC20> summary20(ArrayList<Integer> x,ArrayList<String> ty,String ca,String m) throws IOException, ExecutionException, InterruptedException {
+        int j=0;
+        EthBlock.Block current = getLastBlock();
+        EthBlock.Block oldCurrent = current;
+        ArrayList<cERC20> R = new ArrayList<cERC20>();
+        do{
+            System.out.println("Hopppppaaaaaaaaaaa" + j++ );
+            List<EthBlock.TransactionResult> bigList = current.getTransactions();
+            for(int i = 0; i < bigList.size(); i++){
+                Transaction t = (Transaction) bigList.get(i).get();
+                if(t!=null)
+                    if(t.getTo()!=null)
+                        if(t.getTo().equals(ca))
+                            if( t.getInput()!=null){
+                                if (t.getInput().substring(0,10).equals(m)) {
+                                    //  System.out.println("aiii");
+                                    ArrayList<String>tr=fetchcontractdata(x,t,ty);
+                                    cERC20 n=new cERC20(t.getFrom(),tr.get(0),Double.parseDouble(tr.get(1)));
+                                    R.add(n);
+                                }
+                            }
+            }}
+        while((current = getPreviousBlock(current)) != oldCurrent && j<1);
+        return R;
+    }
+
+    public static ArrayList<cERC721> summary721(ArrayList<Integer> x,ArrayList<Integer> x2,ArrayList<String> ty,ArrayList<String>M,String ca) throws IOException, ExecutionException, InterruptedException {
+        int j=0;
+        EthBlock.Block current = getLastBlock();
+        EthBlock.Block oldCurrent = current;
+        ArrayList<cERC721> R = new ArrayList<cERC721>();
+
+        do{
+            System.out.println("Hopppppaaaaaaaaaaa" + j++ );
+            List<EthBlock.TransactionResult> bigList = current.getTransactions();
+            for(int i = 0; i < bigList.size(); i++){
+                Transaction t = (Transaction) bigList.get(i).get();
+
+                if(t!=null)
+                    if(t.getTo()!=null)
+                        if(t.getTo().equals(ca))
+                            if( t.getInput()!=null){
+                                if (t.getInput().substring(0,10).equals(M.get(0))||t.getInput().substring(0,10).equals(M.get(1))) {
+                                    //  System.out.println("aiii");
+                                    String[] test=web3.ethGetTransactionReceipt(t.getHash() ).send().getTransactionReceipt().toString().split("status='0x");
+                                    if(test.length<2 )
+                                        continue;
+                                    if(test[1].charAt(0)=='0')
+                                        continue;
+                                    ArrayList<String>tr=fetchcontractdata721(x,x2,t,ty,M);
+
+                                    cERC721 n=new cERC721(tr.get(0),tr.get(1),Integer.parseInt(tr.get(2)),t.getValue().doubleValue()/Math.pow(10,18));
+                                    R.add(n);
+                                }
+                            }
+            }}
+        while((current = getPreviousBlock(current)) != oldCurrent && j<10);
+        return R;
+    }
+    public static ArrayList<String> fetchcontractdata(ArrayList<Integer> x,Transaction t,ArrayList<String> ty){
+        String s=t.getInput();
+        s=s.substring(10);
+        ArrayList<String> r=new ArrayList<String>();
+        for(int i=0;i<x.size();i++){
+            int k=x.get(i);
+
+            String z=s.substring(k*64,(k+1)*64);
+            if(ty.get(i).equals("address"))
+                r.add("0x"+z.substring(24));
+            else {
+                double div=Math.pow(10,18);
+                double d= getDecimal(z) /div;
+                r.add(d+"");
+            }
+        }
+        return r;
+
+    }
+    public static ArrayList<String> fetchcontractdata721(ArrayList<Integer> x1,ArrayList<Integer> x2,Transaction t,ArrayList<String> ty,ArrayList<String>M) throws IOException {
+        String s=t.getInput();
+        String m=s.substring(0,10);
+        s=s.substring(10);
+        ArrayList<String> r=new ArrayList<String>();
+        if(m.equals(M.get(0))){
+            r.add(t.getFrom());
+            for(int i=0;i<x1.size();i++){
+                int k=x1.get(i);
+
+                String z=s.substring(k*64,(k+1)*64);
+                if(ty.get(i).equals("address"))
+                    r.add("0x"+z.substring(24));
+                else {
+                    double div=Math.pow(10,18);
+                    double d= getDecimal(z) ;
+                    r.add(d+"");
+                }
+            }}
+        else
+        {
+            if(m.equals(M.get(1))){
+
+                for(int i=0;i<x2.size();i++){
+                    int k=x2.get(i);
+
+                    String z=s.substring(k*64,(k+1)*64);
+                    if(ty.get(i).equals("address")){
+                        r.add("0x"+z.substring(24));
+                        r.add(t.getFrom());  }
+                    else {
+                        double div=Math.pow(10,18);
+                        double d= getDecimal(z) ;
+                        r.add(d+"");
+                    }
+                }
+                System.out.println(t.getHash());
+                String[] s1=  web3.ethGetTransactionReceipt(t.getHash() ).send() .getTransactionReceipt().get().toString().split("Log");
+                s1=s1[1].split(",");
+                double div=Math.pow(10,18);
+                int d= (int) (getDecimal(s1[s1.length-2].substring(3,67)) );
+                r.add(d+"");
+
+            }
+        }
+        return r;
+
+    }
+    public static double getDecimal(String hex){
+        String digits = "0123456789ABCDEF";
+        hex = hex.toUpperCase();
+        double val = 0;
+        for (int i = 0; i < hex.length(); i++)
+        {
+            char c = hex.charAt(i);
+            int d = digits.indexOf(c);
+            val = 16*val + d;
+        }
+        return val;
+    }
+
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         ArrayList<ArrayList<Object>> arr = parse("select hash from transaction where value = 0 ");
         System.out.println(arr.size());
