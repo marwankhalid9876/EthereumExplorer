@@ -24,7 +24,7 @@ public class EthereumExplorer {
     public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(13000000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(30000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -499,7 +499,9 @@ public class EthereumExplorer {
 
         do{
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
+
             for(int i = 0; i < bigList.size(); i++){
+
                 Transaction t = (Transaction) bigList.get(i).get();
 
                 if(t!=null)
@@ -538,11 +540,15 @@ public class EthereumExplorer {
                                         }
                                         else //case2: there are select elements
                                             R.add(selectElementsValuesForERC721(n,selectElements));
+
                                     }
                                 }
                             }
-            }}
-        while((current = getPreviousBlock(current)) != oldCurrent && j<10);
+
+            }
+            j++;
+        }
+        while((current = getPreviousBlock(current)) != oldCurrent && j<10000);
         return R;
     }
 
@@ -630,7 +636,6 @@ public class EthereumExplorer {
                         r.add(d+"");
                     }
                 }
-                System.out.println(t.getHash());
                 String[] s1=  web3.ethGetTransactionReceipt(t.getHash() ).send() .getTransactionReceipt().get().toString().split("Log");
                 s1=s1[1].split(",");
                 double div=Math.pow(10,18);
@@ -656,13 +661,41 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        ArrayList<ArrayList> arr = parse("select * from block");
-        System.out.println(arr.size());
-        int i=0;
-        for(Object selectElement : arr)
-        {
-            i++;
-            System.out.println((i) + "" + selectElement);
+//        ArrayList<ArrayList> arr = parse("select * from block");
+//        System.out.println(arr.size());
+//        int i=0;
+//        for(Object selectElement : arr)
+//        {
+//            i++;
+//            System.out.println((i) + "" + selectElement);
+//        }
+        ArrayList<Integer> x=new ArrayList<>();
+        ArrayList<Integer> y=new ArrayList<>();
+        ArrayList<String> ty=new ArrayList<>();
+        x.add(1);
+        y.add(2);
+        ty.add("address");
+        ty.add("num");
+        x.add(2);
+
+        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
+        ArrayList<String> mm=new ArrayList<>();
+        mm.add("0x23b872dd");
+        mm.add("0xab834bab");
+
+        ArrayList selectElements = new ArrayList();
+        selectElements.add("amount");
+        Condition condition = new Condition("amount", ">", "0");
+
+        ArrayList conditions = new ArrayList();
+
+        // ArrayList<cERC20>a=null;
+        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
+
+        System.out.println(a.size());
+//        System.out.println(a);
+        for (int i=0;i<a.size();i++){
+            System.out.println(a.get(i));
         }
     }
 }
