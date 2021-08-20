@@ -24,7 +24,7 @@ public class EthereumExplorer {
     public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(30000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(1512245)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
