@@ -22,8 +22,6 @@ public class MyListener extends MySqlParserBaseListener{
     }
     @Override public void enterSimpleSelect(MySqlParser.SimpleSelectContext ctx) {
         statement="select";
-        System.out.println("entered se");
-
     }
     @Override public void enterLogicalOperator(MySqlParser.LogicalOperatorContext ctx) {
         expressionList.add(ctx.getText());
@@ -45,11 +43,12 @@ public class MyListener extends MySqlParserBaseListener{
         expressionList.add(theTerm);
     }
 
-    public void enterTableSources(MySqlParser.TableSourcesContext ctx) {
+    public void enterTableSources(MySqlParser.TableSourcesContext ctx){
         String entity = ctx.getChild(0).getText();
         //set entity to block, transaction or account
         this.entity = (entity.equals("block") || entity.equals("transaction") ||
                entity.equals("account"))?  entity : null;
+
     }
 
     @Override public void enterSelectElements(MySqlParser.SelectElementsContext ctx) {
