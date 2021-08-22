@@ -1,4 +1,5 @@
 import jnr.ffi.Struct;
+import jnr.ffi.annotations.In;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -21,10 +22,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
+    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(5774644)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(13077264)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -149,6 +150,12 @@ public class EthereumExplorer {
         String theTable = "";
         String cluster = "";
 
+        if(MyListener.entity == null)
+            try {
+                throw new ExplorerException("Please enter a valid entity to query on!");
+            } catch (ExplorerException e) {
+                e.printStackTrace();
+            }
 
         if (MyListener.statement.equals("select")) {
             colNameVal = new Hashtable<>();
@@ -168,11 +175,11 @@ public class EthereumExplorer {
                 case "erc20":
                     for(int i=0; i<selectElements.size(); i++)
                     {
-                        if(!selectElements.get(i).equals("fromaccount") && !selectElements.get(i).equals("toaccount") &&
-                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("*") )
+                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
+                                !selectElements.get(i).equals("amount"))
                         {
                             try {
-                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! or * ");
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! ");
                             } catch (ExplorerException e) {
                                 e.printStackTrace();
                             }
@@ -207,6 +214,7 @@ public class EthereumExplorer {
     }
 
     public static boolean evaluateCondition(String operator, Comparable operand1, Comparable operand2) {
+
         switch (operator) {
             case "=":
                 return operand1.equals(operand2);
@@ -226,6 +234,28 @@ public class EthereumExplorer {
 
     }
 
+    public static boolean evaluateConditionDouble(String operator, Comparable operand1, Comparable operand2) {
+
+        switch (operator) {
+            case "=":
+                return operand1.equals(((Integer)operand2).doubleValue());
+            case ">":
+                return operand1.compareTo(((Integer)operand2).doubleValue()) > 0;
+            case ">=":
+                return operand1.compareTo(((Integer)operand2).doubleValue()) >= 0;
+            case "<":
+                return operand1.compareTo(((Integer)operand2).doubleValue()) < 0;
+            case "<=":
+                return operand1.compareTo(((Integer)operand2).doubleValue()) <= 0;
+            case "!=":
+                return !operand1.equals(((Integer)operand2).doubleValue());
+            default:
+                return false;
+        }
+
+    }
+
+
 
 
 
@@ -234,8 +264,6 @@ public class EthereumExplorer {
         System.out.println("Block " +  getLastBlock().getNumber());
         int j=0;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
-        ArrayList<String> xxx = MyListener.selectElements;
-        filteredList.add(xxx);
         do{
 //            if(j%50==0)
 //               System.out.println(current.getNumber());
@@ -266,7 +294,7 @@ public class EthereumExplorer {
             }
             current = getPreviousBlock(current);
             j++;
-        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<25);
+        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<10000);
         return filteredList;
     }
     public static void evaluateBrackets(Vector<Object> conditionsSatisfied)
@@ -384,8 +412,6 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
-        ArrayList<String> xxx = MyListener.selectElements;
-        filteredList.add(xxx);
         int j=0;
         do{
             oldCurrent = current;
@@ -415,7 +441,7 @@ public class EthereumExplorer {
             }
             j++;
             current = getPreviousBlock(current);
-        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<25);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<10000);
         return filteredList;
     }
 
@@ -486,7 +512,7 @@ public class EthereumExplorer {
                                 }
                             }
             }}
-        while((current = getPreviousBlock(current)) != oldCurrent && j<25);
+        while((current = getPreviousBlock(current)) != oldCurrent && j<1);
         return R;
     }
 
@@ -533,6 +559,7 @@ public class EthereumExplorer {
                 if(t!=null)
                     if(t.getTo()!=null)
                         if(t.getTo().equals(ca))
+                        {
                             if( t.getInput()!=null){
                                 if (t.getInput().substring(0,10).equals(M.get(0))||t.getInput().substring(0,10).equals(M.get(1))) {
                                     //  System.out.println("aiii");
@@ -570,11 +597,12 @@ public class EthereumExplorer {
                                     }
                                 }
                             }
+                        }
 
             }
             j++;
         }
-        while((current = getPreviousBlock(current)) != oldCurrent && j<25);
+        while((current = getPreviousBlock(current)) != oldCurrent && j<4);
         return R;
     }
 
@@ -582,7 +610,7 @@ public class EthereumExplorer {
         switch(c.getAttribute()){
             case "fromaccount": return c.getValue().equals(n.getFrom());
             case "toaccount": return c.getValue().equals(n.getTo());
-            case "amount": return evaluateCondition(c.getOperator(), n.getAmount(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
+            case "amount": return evaluateConditionDouble(c.getOperator(), n.getAmount(), (Integer.parseInt(c.getValue())));
 
             default:
                 throw new ExplorerException("You have entered an invalid where condition!");
@@ -685,41 +713,42 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException, ExplorerException {
-        ArrayList<ArrayList> arr = parse("select from transaction");
-        System.out.println(arr.size());
-        int i=0;
-        for(Object selectElement : arr)
-        {
-            i++;
-            System.out.println((i) + "" + selectElement);
-        }
-//        ArrayList<Integer> x=new ArrayList<>();
-//        ArrayList<Integer> y=new ArrayList<>();
-//        ArrayList<String> ty=new ArrayList<>();
-//        x.add(1);
-//        y.add(2);
-//        ty.add("address");
-//        ty.add("num");
-//        x.add(2);
-//
-//        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
-//        ArrayList<String> mm=new ArrayList<>();
-//        mm.add("0x23b872dd");
-//        mm.add("0xab834bab");
-//
-//        ArrayList selectElements = new ArrayList();
-//        selectElements.add("amount");
-//        Condition condition = new Condition("amount", "=", "0");
-//
-//        ArrayList conditions = new ArrayList();
-//
-//        // ArrayList<cERC20>a=null;
-//        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0xf8a4d3a0b5859a24cd1320ba014ab17f623612e2",selectElements,conditions);
-//
-//        System.out.println(a.size());
-////        System.out.println(a);
-//        for (int i=0;i<a.size();i++){
-//            System.out.println(a.get(i));
+//        ArrayList<ArrayList> arr = parse("select from transaction");
+//        System.out.println(arr.size());
+//        int i=0;
+//        for(Object selectElement : arr)
+//        {
+//            i++;
+//            System.out.println((i) + "" + selectElement);
 //        }
+        ArrayList<Integer> x=new ArrayList<>();
+        ArrayList<Integer> y=new ArrayList<>();
+        ArrayList<String> ty=new ArrayList<>();
+        x.add(1);
+        y.add(2);
+        ty.add("address");
+        ty.add("num");
+        x.add(2);
+
+        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
+        ArrayList<String> mm=new ArrayList<>();
+        mm.add("0x23b872dd");
+        mm.add("0xab834bab");
+
+        ArrayList selectElements = new ArrayList();
+        selectElements.add("*");
+        Condition condition = new Condition("amount", ">", "0");
+
+        ArrayList conditions = new ArrayList();
+        conditions.add(condition);
+
+        // ArrayList<cERC20>a=null;
+        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
+
+        System.out.println(a.size());
+//        System.out.println(a);
+        for (int i=0;i<a.size();i++){
+            System.out.println(a.get(i));
+        }
     }
 }
