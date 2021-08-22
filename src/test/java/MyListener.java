@@ -17,6 +17,7 @@ public class MyListener extends MySqlParserBaseListener{
         statement="";
         entity="";
         expressionList=new ArrayList<>();
+        selectElements = new ArrayList<>();
 
 
     }
@@ -47,7 +48,7 @@ public class MyListener extends MySqlParserBaseListener{
         String entity = ctx.getChild(0).getText();
         //set entity to block, transaction or account
         this.entity = (entity.equals("block") || entity.equals("transaction") ||
-               entity.equals("account"))?  entity : null;
+                entity.equals("account") || entity.equals("erc721") || entity.equals("erc20"))?  entity : null;
 
     }
 

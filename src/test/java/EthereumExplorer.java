@@ -21,10 +21,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
+    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(1000000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(5774644)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -149,12 +149,6 @@ public class EthereumExplorer {
         String theTable = "";
         String cluster = "";
 
-        if(MyListener.entity == null)
-            try {
-                throw new ExplorerException("Please enter a valid entity to query on!");
-            } catch (ExplorerException e) {
-                e.printStackTrace();
-            }
 
         if (MyListener.statement.equals("select")) {
             colNameVal = new Hashtable<>();
@@ -174,11 +168,11 @@ public class EthereumExplorer {
                 case "erc20":
                     for(int i=0; i<selectElements.size(); i++)
                     {
-                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
-                                !selectElements.get(i).equals("amount"))
+                        if(!selectElements.get(i).equals("fromaccount") && !selectElements.get(i).equals("toaccount") &&
+                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("*") )
                         {
                             try {
-                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! ");
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! or * ");
                             } catch (ExplorerException e) {
                                 e.printStackTrace();
                             }
@@ -240,6 +234,8 @@ public class EthereumExplorer {
         System.out.println("Block " +  getLastBlock().getNumber());
         int j=0;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
+        ArrayList<String> xxx = MyListener.selectElements;
+        filteredList.add(xxx);
         do{
 //            if(j%50==0)
 //               System.out.println(current.getNumber());
@@ -270,7 +266,7 @@ public class EthereumExplorer {
             }
             current = getPreviousBlock(current);
             j++;
-        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<10000);
+        }while(!current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000") && j<25);
         return filteredList;
     }
     public static void evaluateBrackets(Vector<Object> conditionsSatisfied)
@@ -388,6 +384,8 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
+        ArrayList<String> xxx = MyListener.selectElements;
+        filteredList.add(xxx);
         int j=0;
         do{
             oldCurrent = current;
@@ -417,7 +415,7 @@ public class EthereumExplorer {
             }
             j++;
             current = getPreviousBlock(current);
-        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<10000);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<25);
         return filteredList;
     }
 
@@ -488,7 +486,7 @@ public class EthereumExplorer {
                                 }
                             }
             }}
-        while((current = getPreviousBlock(current)) != oldCurrent && j<1);
+        while((current = getPreviousBlock(current)) != oldCurrent && j<25);
         return R;
     }
 
@@ -576,7 +574,7 @@ public class EthereumExplorer {
             }
             j++;
         }
-        while((current = getPreviousBlock(current)) != oldCurrent && j<10000);
+        while((current = getPreviousBlock(current)) != oldCurrent && j<25);
         return R;
     }
 

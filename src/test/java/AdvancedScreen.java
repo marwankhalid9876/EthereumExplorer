@@ -9,6 +9,7 @@ import org.web3j.protocol.core.methods.response.Transaction;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -28,11 +29,26 @@ public class AdvancedScreen extends JFrame {
         initComponents();
     }
 
-    public AdvancedScreen(String key, JFrame m) throws ExecutionException, InterruptedException, IOException {
+    public AdvancedScreen(String key, JFrame m, int cont, ArrayList<ArrayList> stuff) throws ExecutionException, InterruptedException, IOException, ExplorerException {
         initComponents();
         parentFrame = m;
         QueryResult.setText("Query Results: ("+key+")");
-        ArrayList<ArrayList> everything = EthereumExplorer.parse(key);
+        ArrayList<ArrayList> everything;
+        if(cont == 0) {
+            everything = EthereumExplorer.parse(key);
+        }
+        else{
+            if(cont == 1){
+                ArrayList<ArrayList> parsed = EthereumExplorer.parse(key);
+                everything = EthereumExplorer.summary20(stuff.get(0),stuff.get(2),(String)(stuff.get(4).get(0)),
+                        (String)(stuff.get(3).get(0)),parsed.get(0),parsed.get(1));
+            }
+            else{
+                ArrayList<ArrayList> parsed = EthereumExplorer.parse(key);
+                everything = EthereumExplorer.summary721(stuff.get(0),stuff.get(1),stuff.get(2),stuff.get(3),
+                        (String)(stuff.get(4).get(0)),parsed.get(0),parsed.get(1));
+            }
+        }
         //DefaultTableModel tm = new DefaultTableModel(everything.size(),everything.get(0).size()+1);
         ArrayList<Object> attNames = everything.remove(0);
         Object[][] outer = new Object[everything.size()][everything.get(0).size()+1];
