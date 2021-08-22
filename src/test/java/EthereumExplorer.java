@@ -536,7 +536,7 @@ public class EthereumExplorer {
         switch(c.getAttribute()){
             case "fromaccount": return c.getValue().equals(n.getFrom());
             case "toaccount": return c.getValue().equals(n.getTo());
-            case "amount": return evaluateCondition(c.getOperator(), n.getAmount(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
+            case "amount": return evaluateConditionDouble(c.getOperator(), n.getAmount(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
 
             default:
                 throw new ExplorerException("You have entered an invalid where condition!");
