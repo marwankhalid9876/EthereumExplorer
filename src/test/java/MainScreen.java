@@ -6,6 +6,7 @@
 
 //import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -357,7 +358,7 @@ public class MainScreen extends javax.swing.JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ExplorerException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,e.getMessage());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -396,7 +397,7 @@ public class MainScreen extends javax.swing.JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ExplorerException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,e.getMessage());
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 

@@ -25,7 +25,7 @@ public class EthereumExplorer {
     public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(13077264)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(12000000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -90,7 +90,7 @@ public class EthereumExplorer {
     }
 
 
-    public static boolean checkTransactionOnCondition(Transaction t, Condition c) {
+    public static boolean checkTransactionOnCondition(Transaction t, Condition c) throws ExplorerException {
 
         switch(c.getAttribute()){
             case "fromaccount": return c.getValue().equals(t.getFrom());
@@ -101,15 +101,12 @@ public class EthereumExplorer {
             case "gasPrice": return evaluateCondition(c.getOperator(), t.getGasPrice(), BigInteger.valueOf(Integer.parseInt(c.getValue())));
             case "nonce": return t.getNonceRaw().equals(c.getValue());
             default:
-                try {
+
                     throw new ExplorerException("You have entered an invalid where condition!");
-                } catch (ExplorerException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+
         }
     }
-    public static boolean checkBlockOnCondition(EthBlock.Block B,Condition c) {
+    public static boolean checkBlockOnCondition(EthBlock.Block B,Condition c) throws ExplorerException {
         switch(c.getAttribute()) {
             case "blockheight":return evaluateCondition(c.getOperator(),B.getNumber(),BigInteger.valueOf(Integer.parseInt(c.getValue())));
             case "timestamp":;
@@ -121,17 +118,14 @@ public class EthereumExplorer {
             case "gaslimit":return evaluateCondition(c.getOperator(),B.getGasLimit(),BigInteger.valueOf(Integer.parseInt(c.getValue())));
             case "parenthash":return B.getParentHash().equals(c.getValue());
             default:
-                try {
+
                     throw new ExplorerException("You have entered an invalid where condition!");
-                } catch (ExplorerException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+
 
         }
     }
 
-    public static ArrayList<ArrayList> parse(String code ) throws IOException, ExecutionException, InterruptedException{
+    public static ArrayList<ArrayList> parse(String code ) throws IOException, ExecutionException, InterruptedException, ExplorerException {
         // Before looking at this method ,Look at Mylistener.java file as it is subclass of MySqlParserBaseListener.java
         // in Mylistener.java you will find instance variables I called here and methods of entering grammar rules I implemented that overrides the super class MySqlParserBaseListener.java
         //If you will call this method,You have to disable scala plugin that it is added lately in intellij ,for that go to file->settings->plugins->(search for scala and disable it)
@@ -151,11 +145,9 @@ public class EthereumExplorer {
         String cluster = "";
 
         if(MyListener.entity == null)
-            try {
+
                 throw new ExplorerException("Please enter a valid entity to query on!");
-            } catch (ExplorerException e) {
-                e.printStackTrace();
-            }
+
 
         if (MyListener.statement.equals("select")) {
             colNameVal = new Hashtable<>();
@@ -172,17 +164,14 @@ public class EthereumExplorer {
                 case "transaction": return queryTransactions(sqltermsArray, selectElements);
                 case "block": return queryBlock(sqltermsArray, selectElements);
                 case "erc721":
-                case "erc20":
                     for(int i=0; i<selectElements.size(); i++)
                     {
                         if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
-                                !selectElements.get(i).equals("amount"))
+                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("id"))
                         {
-                            try {
-                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! ");
-                            } catch (ExplorerException e) {
-                                e.printStackTrace();
-                            }
+
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount' or 'id'! ");
+
                         }
                     }
                     for(int i=0; i<sqltermsArray.length; i++)
@@ -192,25 +181,48 @@ public class EthereumExplorer {
                             if(!((Condition)sqltermsArray[i]).getAttribute().equals("from") &&
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
-                                try {
+
                                     throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'! ");
-                                } catch (ExplorerException e) {
-                                    e.printStackTrace();
-                                }
+
                         }
                     }
                     ArrayList<ArrayList> selectElementsAndConditions = new ArrayList<>();
                     selectElementsAndConditions.add(MyListener.selectElements);
                     selectElementsAndConditions.add(MyListener.expressionList);
                     return selectElementsAndConditions;
+
+                case "erc20":
+                    for(int i=0; i<selectElements.size(); i++)
+                    {
+                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
+                                !selectElements.get(i).equals("amount"))
+                        {
+
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! ");
+
+                        }
+                    }
+                    for(int i=0; i<sqltermsArray.length; i++)
+                    {
+                        if(!(sqltermsArray[i] instanceof Condition))
+                        {
+                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("from") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
+
+                                    throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'! ");
+
+                        }
+                    }
+                    selectElementsAndConditions = new ArrayList<>();
+                    selectElementsAndConditions.add(MyListener.selectElements);
+                    selectElementsAndConditions.add(MyListener.expressionList);
+                    return selectElementsAndConditions;
             }
         }
-        try {
+
             throw new ExplorerException("Please enter a select statement!");
-        } catch (ExplorerException e) {
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
     public static boolean evaluateCondition(String operator, Comparable operand1, Comparable operand2) {
@@ -259,11 +271,12 @@ public class EthereumExplorer {
 
 
 
-    public static ArrayList<ArrayList> queryTransactions(Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> queryTransactions(Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException, ExplorerException {
         EthBlock.Block current = getLastBlock();
         System.out.println("Block " +  getLastBlock().getNumber());
         int j=0;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
+        filteredList.add(MyListener.selectElements);
         do{
 //            if(j%50==0)
 //               System.out.println(current.getNumber());
@@ -322,7 +335,7 @@ public class EthereumExplorer {
         conditionsSatisfied.add(i,conditionsResult(toBeEvaluated));
     }
 
-    private static ArrayList<String> selectElementsValuesForTransaction(Transaction t, ArrayList<String> selectElements)  {
+    private static ArrayList<String> selectElementsValuesForTransaction(Transaction t, ArrayList<String> selectElements) throws ExplorerException {
         ArrayList<String> selectValues = new ArrayList<>();
         for(int i=0; i<selectElements.size(); i++)
         {
@@ -336,11 +349,9 @@ public class EthereumExplorer {
                 case "gasPrice":selectValues.add(t.getGasPrice().toString()); break;
                 case "nonce": selectValues.add(t.getNonce().toString()); break;
                 default:
-                    try {
+
                         throw new ExplorerException("The typed select elements are not valid for this transaction!");
-                    } catch (ExplorerException e) {
-                        e.printStackTrace();
-                    }
+
             }
         }
         return selectValues;
@@ -408,10 +419,11 @@ public class EthereumExplorer {
         return (boolean) conditionsSatisfied.get(0);
     }
 
-    public static ArrayList<ArrayList> queryBlock (Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException {
+    public static ArrayList<ArrayList> queryBlock (Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException, ExplorerException {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
+        filteredList.add(MyListener.selectElements);
         int j=0;
         do{
             oldCurrent = current;
@@ -445,7 +457,7 @@ public class EthereumExplorer {
         return filteredList;
     }
 
-    public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, ArrayList<String> selectElements) {
+    public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, ArrayList<String> selectElements) throws ExplorerException {
         ArrayList<Object> selectValues = new ArrayList<>();
         for(int i=0; i<selectElements.size(); i++)
         {
@@ -460,11 +472,9 @@ public class EthereumExplorer {
                 case"gaslimit":selectValues.add(c.getGasLimit().toString());break;
                 case"hash":selectValues.add(c.getHash());break;
                 default:
-                    try {
+
                         throw new ExplorerException("The typed select elements are not valid for this Block!");
-                    } catch (ExplorerException e) {
-                        e.printStackTrace();
-                    }
+
             }
         }
         return selectValues;
@@ -476,6 +486,7 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
         ArrayList<ArrayList> R = new ArrayList<ArrayList>();
+        R.add(MyListener.selectElements);
         do{
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
@@ -548,6 +559,7 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
         ArrayList<ArrayList> R = new ArrayList<ArrayList>();
+        R.add(MyListener.selectElements);
 
         do{
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
@@ -611,6 +623,7 @@ public class EthereumExplorer {
             case "fromaccount": return c.getValue().equals(n.getFrom());
             case "toaccount": return c.getValue().equals(n.getTo());
             case "amount": return evaluateConditionDouble(c.getOperator(), n.getAmount(), (Integer.parseInt(c.getValue())));
+            case "id": return evaluateCondition(c.getOperator(), n.getID(), (Integer.parseInt(c.getValue())));
 
             default:
                 throw new ExplorerException("You have entered an invalid where condition!");
@@ -626,6 +639,8 @@ public class EthereumExplorer {
                 case "fromaccount": selectValues.add(n.getFrom()); break;
                 case "toaccount": selectValues.add(n.getTo()); break;
                 case "amount": selectValues.add(((Double)n.getAmount()).toString()); break;
+                case "id": selectValues.add(((Integer)n.getID()).toString());
+                break;
                 default:
                   throw new ExplorerException("The typed select elements are not valid for this token!");
             }

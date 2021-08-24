@@ -130,7 +130,7 @@ public class AdvancedScreen extends JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jPanel1.add(jScrollPane1);
-        jScrollPane1.setBounds(50, 130, 452, 170);
+        jScrollPane1.setBounds(50, 130, 1100, 600);
 
         Background.setIcon(new ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
         Background.setLabelFor(jPanel1);
