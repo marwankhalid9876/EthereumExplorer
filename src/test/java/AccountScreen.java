@@ -37,20 +37,17 @@ public class AccountScreen extends JFrame {
         BigInteger result = EthereumExplorer.getAccountBalanceByAddress(key);
         Balance.setText(result+" Wei");
         Dollars.setText(Convert.fromWei(String.valueOf(result), Convert.Unit.WEI)+"$");
-        ArrayList<Condition> conds = new ArrayList<Condition>();
-        conds.add(new Condition("to", "=",key)); //conds.add(new Condition("from", "=",key));
-        ArrayList<String> ops = new ArrayList<String>();
-        //ops.add("OR");
-        ArrayList<String> pars = new ArrayList<String>();
-        /*ArrayList<Transaction> x = EthereumExplorer.queryTransactionsByConditions(conds,ops,pars);
-        if(x.isEmpty()){
-            System.out.println("empty list");   
-        }
-        for(int i = 0; i < x.size(); i++){
-            JLabel tbu = new JLabel(x.get(i).getHash());
-            Background.add(tbu);
-            tbu.setBounds(60,210+30*i,400,30);
-        }*/
+        revalidate();
+        repaint();
+    }
+
+    public AccountScreen(EAccount a, JFrame m) throws ExecutionException, InterruptedException, IOException {
+        initComponents();
+        parentFrame = m;
+        Hash.setText(a.hash);
+        BigInteger result = EthereumExplorer.getAccountBalanceByAddress(a.hash);
+        Balance.setText(result+" Wei");
+        Dollars.setText(Convert.fromWei(String.valueOf(result), Convert.Unit.WEI)+"$");
         revalidate();
         repaint();
     }

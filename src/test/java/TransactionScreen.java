@@ -48,27 +48,25 @@ public class TransactionScreen extends JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new JPanel();
-        SkyScraper = new JLabel();
-        From = new JLabel();
-        Hash = new JLabel();
-        TransactionDetails = new JLabel();
-        Hash1 = new JLabel();
-        From1 = new JLabel();
-        Block1 = new JLabel();
-        Block = new JLabel();
-        To1 = new JLabel();
-        To = new JLabel();
-        Value1 = new JLabel();
-        Value = new JLabel();
-        GasUsed1 = new JLabel();
-        GasUsed = new JLabel();
-        GasPrice1 = new JLabel();
-        GasPrice = new JLabel();
-        BackButton = new JButton();
-        Background = new JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        SkyScraper = new javax.swing.JLabel();
+        From = new javax.swing.JLabel();
+        Hash = new javax.swing.JLabel();
+        TransactionDetails = new javax.swing.JLabel();
+        Hash1 = new javax.swing.JLabel();
+        From1 = new javax.swing.JLabel();
+        To1 = new javax.swing.JLabel();
+        To = new javax.swing.JLabel();
+        Value1 = new javax.swing.JLabel();
+        Value = new javax.swing.JLabel();
+        GasUsed1 = new javax.swing.JLabel();
+        GasUsed = new javax.swing.JLabel();
+        GasPrice1 = new javax.swing.JLabel();
+        GasPrice = new javax.swing.JLabel();
+        BackButton = new javax.swing.JButton();
+        Background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(null);
 
@@ -82,7 +80,7 @@ public class TransactionScreen extends JFrame {
         From.setForeground(new java.awt.Color(255, 255, 255));
         From.setText("[From]");
         jPanel1.add(From);
-        From.setBounds(180, 160, 340, 15);
+        From.setBounds(180, 140, 340, 15);
 
         Hash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         Hash.setForeground(new java.awt.Color(255, 255, 255));
@@ -106,67 +104,55 @@ public class TransactionScreen extends JFrame {
         From1.setForeground(new java.awt.Color(255, 255, 255));
         From1.setText("From:");
         jPanel1.add(From1);
-        From1.setBounds(60, 160, 130, 15);
-
-        Block1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        Block1.setForeground(new java.awt.Color(255, 255, 255));
-        Block1.setText("Block:");
-        jPanel1.add(Block1);
-        Block1.setBounds(60, 140, 130, 15);
-
-        Block.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        Block.setForeground(new java.awt.Color(255, 255, 255));
-        Block.setText("[Block]");
-        jPanel1.add(Block);
-        Block.setBounds(180, 140, 340, 15);
+        From1.setBounds(60, 140, 130, 15);
 
         To1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         To1.setForeground(new java.awt.Color(255, 255, 255));
         To1.setText("To:");
         jPanel1.add(To1);
-        To1.setBounds(60, 180, 130, 15);
+        To1.setBounds(60, 160, 130, 15);
 
         To.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         To.setForeground(new java.awt.Color(255, 255, 255));
         To.setText("[To]");
         jPanel1.add(To);
-        To.setBounds(180, 180, 340, 15);
+        To.setBounds(180, 160, 340, 15);
 
         Value1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         Value1.setForeground(new java.awt.Color(255, 255, 255));
         Value1.setText("Value:");
         jPanel1.add(Value1);
-        Value1.setBounds(60, 200, 130, 15);
+        Value1.setBounds(60, 180, 130, 15);
 
         Value.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         Value.setForeground(new java.awt.Color(255, 255, 255));
         Value.setText("[Value]");
         jPanel1.add(Value);
-        Value.setBounds(180, 200, 340, 15);
+        Value.setBounds(180, 180, 340, 15);
 
         GasUsed1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         GasUsed1.setForeground(new java.awt.Color(255, 255, 255));
         GasUsed1.setText("Gas Used:");
         jPanel1.add(GasUsed1);
-        GasUsed1.setBounds(60, 220, 130, 15);
+        GasUsed1.setBounds(60, 200, 130, 15);
 
         GasUsed.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         GasUsed.setForeground(new java.awt.Color(255, 255, 255));
         GasUsed.setText("[Gas]");
         jPanel1.add(GasUsed);
-        GasUsed.setBounds(180, 220, 340, 15);
+        GasUsed.setBounds(180, 200, 340, 15);
 
         GasPrice1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         GasPrice1.setForeground(new java.awt.Color(255, 255, 255));
         GasPrice1.setText("Gas Price:");
         jPanel1.add(GasPrice1);
-        GasPrice1.setBounds(60, 240, 130, 15);
+        GasPrice1.setBounds(60, 220, 130, 15);
 
         GasPrice.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         GasPrice.setForeground(new java.awt.Color(255, 255, 255));
         GasPrice.setText("[GasPrice]");
         jPanel1.add(GasPrice);
-        GasPrice.setBounds(180, 240, 340, 15);
+        GasPrice.setBounds(180, 220, 340, 15);
 
         BackButton.setText("Back");
         BackButton.addActionListener(new java.awt.event.ActionListener() {
@@ -177,20 +163,20 @@ public class TransactionScreen extends JFrame {
         jPanel1.add(BackButton);
         BackButton.setBounds(1280, 730, 73, 23);
 
-        Background.setIcon(new ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
+        Background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
         Background.setLabelFor(jPanel1);
         jPanel1.add(Background);
         Background.setBounds(0, 0, 1366, 768);
 
-        GroupLayout layout = new GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 1366, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1366, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
         );
 
         pack();
@@ -240,24 +226,22 @@ public class TransactionScreen extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton BackButton;
-    private JLabel Background;
-    private JLabel Block;
-    private JLabel Block1;
-    private JLabel From;
-    private JLabel From1;
-    private JLabel GasPrice;
-    private JLabel GasPrice1;
-    private JLabel GasUsed;
-    private JLabel GasUsed1;
-    private JLabel Hash;
-    private JLabel Hash1;
-    private JLabel SkyScraper;
-    private JLabel To;
-    private JLabel To1;
-    private JLabel TransactionDetails;
-    private JLabel Value;
-    private JLabel Value1;
-    private JPanel jPanel1;
+    private javax.swing.JButton BackButton;
+    private javax.swing.JLabel Background;
+    private javax.swing.JLabel From;
+    private javax.swing.JLabel From1;
+    private javax.swing.JLabel GasPrice;
+    private javax.swing.JLabel GasPrice1;
+    private javax.swing.JLabel GasUsed;
+    private javax.swing.JLabel GasUsed1;
+    private javax.swing.JLabel Hash;
+    private javax.swing.JLabel Hash1;
+    private javax.swing.JLabel SkyScraper;
+    private javax.swing.JLabel To;
+    private javax.swing.JLabel To1;
+    private javax.swing.JLabel TransactionDetails;
+    private javax.swing.JLabel Value;
+    private javax.swing.JLabel Value1;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

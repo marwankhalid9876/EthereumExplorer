@@ -7,6 +7,8 @@
 //import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -15,13 +17,27 @@ import java.util.concurrent.ExecutionException;
  *
  * @author Youssef Ziad
  */
-public class MainScreen extends javax.swing.JFrame {
+public class MainScreen extends javax.swing.JFrame implements ActionListener {
 
     /**
      * Creates new form MainScreen
      */
     public MainScreen() {
+
         initComponents();
+        showhide = new JButton();
+        showhide.setContentAreaFilled(false);
+        showhide.setBorderPainted(false);
+        showhide.setIcon(shower);
+        ExPosBox.setVisible(false);
+        TypeL5.setVisible(false);
+        AddButton.setVisible(false);
+        X2Label.setVisible(false);
+        showhide.addActionListener(this);
+        Background.setLayout(null);
+        Background.add(showhide);
+        showhide.setBounds(5,260,30,30);
+        ShowOrHide();
     }
 
     /**
@@ -285,6 +301,25 @@ public class MainScreen extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void ShowOrHide(){
+        boolean toset = !SearchBox3.isVisible();
+        EnterSearchTerm3.setVisible(toset);
+        SearchBox3.setVisible(toset);
+        jButton3.setVisible(toset);
+        FormatBox.setVisible(toset);
+        TypeL.setVisible(toset);
+        TypeL1.setVisible(toset);
+        TypeL2.setVisible(toset);
+        TypeL3.setVisible(toset);
+        TypeL4.setVisible(toset);
+        TypeL5.setVisible(toset);
+        AddPosBox1.setVisible(toset);
+        ValPosBox.setVisible(toset);
+        MethodBox.setVisible(toset);
+        MethodBox1.setVisible(toset);
+        HashBox.setVisible(toset);
+    }
+
     private void SearchForBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchForBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_SearchForBoxActionPerformed
@@ -497,4 +532,14 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
+    private JButton showhide;
+    private ImageIcon shower = new ImageIcon(getClass().getResource("/triangle-right-arrow.png"));
+    private ImageIcon hider = new ImageIcon(getClass().getResource("/drop-down-arrow.png"));
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton x = ((JButton) e.getSource());
+        x.setIcon(x.getIcon().equals(shower)?hider:shower);
+        ShowOrHide();
+    }
 }

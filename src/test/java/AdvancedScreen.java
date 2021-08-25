@@ -8,6 +8,7 @@ import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -51,21 +52,25 @@ public class AdvancedScreen extends JFrame {
         }
         //DefaultTableModel tm = new DefaultTableModel(everything.size(),everything.get(0).size()+1);
         ArrayList<Object> attNames = everything.remove(0);
+        if(everything.size() == 0)
+            throw new ExplorerException("No results found.");
         Object[][] outer = new Object[everything.size()][everything.get(0).size()+1];
         for(int i = 0; i < everything.size(); i++){
             outer[i][0] = i+1;
-            for(int j = 0; j< everything.get(i).size(); j++){
-                outer[i][j+1] = everything.get(i).get(j);
+            for(int j = 0; j< everything.get(i).size()-1; j++){
+                outer[i][j+1] = new TButton(everything.get(i).get(0),this,everything.get(i).get(j+1)+"");
             }
         }
-        Object[] attNames2 = new Object[attNames.size()+1];
+        String[] attNames2 = new String[attNames.size()+1];
         attNames2[0] = "Number";
         for(int i = 0; i < attNames.size(); i++){
-            attNames2[i+1] = attNames.get(i);
+            attNames2[i+1] = (String) attNames.get(i);
         }
-        DefaultTableModel tm = new DefaultTableModel(outer,attNames2);
-        jTable1.setModel(tm);
-
+        TableCellRenderer tcr = jTable1.getDefaultRenderer(TButton.class);
+        jTable1.setDefaultRenderer(TButton.class,new JTableButtonRenderer(tcr));
+        jTable1.setModel(new JTableButtonModel(outer,attNames2));
+        jTable1.addMouseListener(new JTableButtonMouseListener(jTable1));
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(80);
         /*for(int i = 0; i < everything.size(); i++){
             jTable1.getModel().setValueAt(i+1,i,0);
             for(int j = 0; j< everything.get(i).size(); j++){

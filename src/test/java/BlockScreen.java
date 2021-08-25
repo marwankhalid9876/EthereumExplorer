@@ -9,6 +9,8 @@ import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.Transaction;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
@@ -44,12 +46,17 @@ public class BlockScreen extends JFrame {
         GasUsed.setText(b.getGasUsed()+"");
         Background.setLayout(null);
         List<EthBlock.TransactionResult> x = b.getTransactions();
+        Object[][] rows = new Object[x.size()][2];
         for(int i = 0; i < x.size(); i++){
             Transaction t = (Transaction) x.get(i).get();
-            TButton tbu = new TButton(t,this);
-            Background.add(tbu);
-            tbu.setBounds(60,300+30*i,400,30);
+            rows[i][0] = i+1;
+            rows[i][1] = new TButton(t,this,t.getHash());
         }
+        TableCellRenderer tcr = jTable1.getDefaultRenderer(TButton.class);
+        jTable1.setDefaultRenderer(TButton.class,new JTableButtonRenderer(tcr));
+        jTable1.setModel(new JTableButtonModel(rows,new String[]{"Number","Transaction"}));
+        jTable1.addMouseListener(new JTableButtonMouseListener(jTable1));
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(80);
         revalidate();
         repaint();
     }
@@ -67,13 +74,25 @@ public class BlockScreen extends JFrame {
         GasLimit.setText(b.getGasLimit()+"");
         GasUsed.setText(b.getGasUsed()+"");
         Background.setLayout(null);
+
         List<EthBlock.TransactionResult> x = b.getTransactions();
+        Object[][] rows = new Object[x.size()][2];
         for(int i = 0; i < x.size(); i++){
             Transaction t = (Transaction) x.get(i).get();
-            TButton tbu = new TButton(t,this);
+            rows[i][0] = i+1;
+            rows[i][1] = new TButton(t,this,t.getHash());
+        }
+        TableCellRenderer tcr = jTable1.getDefaultRenderer(TButton.class);
+        jTable1.setDefaultRenderer(TButton.class,new JTableButtonRenderer(tcr));
+        jTable1.setModel(new JTableButtonModel(rows,new String[]{"Number","Transaction"}));
+        jTable1.addMouseListener(new JTableButtonMouseListener(jTable1));
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(80);
+        /*for(int i = 0; i < x.size(); i++){
+            Transaction t = (Transaction) x.get(i).get();
+            TButton tbu = new TButton(t,this,t.getHash());
             Background.add(tbu);
             tbu.setBounds(60,300+30*i,400,30);
-        }
+        }*/
         revalidate();
         repaint();
     }
@@ -89,125 +108,127 @@ public class BlockScreen extends JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new JPanel();
-        SkyScraper = new JLabel();
-        NoTrans = new JLabel();
-        Hash = new JLabel();
-        BlockDetails = new JLabel();
-        Hash1 = new JLabel();
-        NoTrans1 = new JLabel();
-        Block1 = new JLabel();
-        Block = new JLabel();
-        Miner1 = new JLabel();
-        Miner = new JLabel();
-        Difficulty1 = new JLabel();
-        Difficulty = new JLabel();
-        GasUsed1 = new JLabel();
-        GasUsed = new JLabel();
-        GasLimit1 = new JLabel();
-        GasLimit = new JLabel();
-        BackButton = new JButton();
-        PHash1 = new JLabel();
-        PHash = new JLabel();
-        Transactions = new JLabel();
-        Background = new JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        SkyScraper = new javax.swing.JLabel();
+        NoTrans = new javax.swing.JLabel();
+        Hash = new javax.swing.JLabel();
+        BlockDetails = new javax.swing.JLabel();
+        Hash1 = new javax.swing.JLabel();
+        NoTrans1 = new javax.swing.JLabel();
+        Block1 = new javax.swing.JLabel();
+        Block = new javax.swing.JLabel();
+        Miner1 = new javax.swing.JLabel();
+        Miner = new javax.swing.JLabel();
+        Difficulty1 = new javax.swing.JLabel();
+        Difficulty = new javax.swing.JLabel();
+        GasUsed1 = new javax.swing.JLabel();
+        GasUsed = new javax.swing.JLabel();
+        GasLimit1 = new javax.swing.JLabel();
+        GasLimit = new javax.swing.JLabel();
+        BackButton = new javax.swing.JButton();
+        PHash1 = new javax.swing.JLabel();
+        PHash = new javax.swing.JLabel();
+        Transactions = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        Background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(null);
 
-        SkyScraper.setFont(new Font("Trebuchet MS", 1, 36)); // NOI18N
-        SkyScraper.setForeground(new Color(255, 255, 255));
+        SkyScraper.setFont(new java.awt.Font("Trebuchet MS", 1, 36)); // NOI18N
+        SkyScraper.setForeground(new java.awt.Color(255, 255, 255));
         SkyScraper.setText("SkyScraper");
         jPanel1.add(SkyScraper);
         SkyScraper.setBounds(30, 20, 190, 42);
 
-        NoTrans.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        NoTrans.setForeground(new Color(255, 255, 255));
+        NoTrans.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        NoTrans.setForeground(new java.awt.Color(255, 255, 255));
         NoTrans.setText("[TCount]");
         jPanel1.add(NoTrans);
         NoTrans.setBounds(180, 180, 130, 15);
 
-        Hash.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        Hash.setForeground(new Color(255, 255, 255));
+        Hash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        Hash.setForeground(new java.awt.Color(255, 255, 255));
         Hash.setText("[Hash]");
         jPanel1.add(Hash);
         Hash.setBounds(180, 120, 130, 15);
 
-        BlockDetails.setFont(new Font("Tahoma", 1, 14)); // NOI18N
-        BlockDetails.setForeground(new Color(255, 255, 255));
+        BlockDetails.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        BlockDetails.setForeground(new java.awt.Color(255, 255, 255));
         BlockDetails.setText("Block Details:");
         jPanel1.add(BlockDetails);
         BlockDetails.setBounds(30, 90, 180, 17);
 
-        Hash1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        Hash1.setForeground(new Color(255, 255, 255));
+        Hash1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Hash1.setForeground(new java.awt.Color(255, 255, 255));
         Hash1.setText("Hash:");
         jPanel1.add(Hash1);
         Hash1.setBounds(60, 120, 130, 15);
 
-        NoTrans1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        NoTrans1.setForeground(new Color(255, 255, 255));
+        NoTrans1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        NoTrans1.setForeground(new java.awt.Color(255, 255, 255));
         NoTrans1.setText("No of Transactions:");
         jPanel1.add(NoTrans1);
         NoTrans1.setBounds(60, 180, 130, 15);
 
-        Block1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        Block1.setForeground(new Color(255, 255, 255));
+        Block1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Block1.setForeground(new java.awt.Color(255, 255, 255));
         Block1.setText("Block Height:");
         jPanel1.add(Block1);
         Block1.setBounds(60, 160, 130, 15);
 
-        Block.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        Block.setForeground(new Color(255, 255, 255));
+        Block.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        Block.setForeground(new java.awt.Color(255, 255, 255));
         Block.setText("[BlockHeight]");
         jPanel1.add(Block);
         Block.setBounds(180, 160, 130, 15);
 
-        Miner1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        Miner1.setForeground(new Color(255, 255, 255));
+        Miner1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Miner1.setForeground(new java.awt.Color(255, 255, 255));
         Miner1.setText("Miner:");
         jPanel1.add(Miner1);
         Miner1.setBounds(60, 200, 130, 15);
 
-        Miner.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        Miner.setForeground(new Color(255, 255, 255));
+        Miner.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        Miner.setForeground(new java.awt.Color(255, 255, 255));
         Miner.setText("[Miner]");
         jPanel1.add(Miner);
         Miner.setBounds(180, 200, 130, 15);
 
-        Difficulty1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        Difficulty1.setForeground(new Color(255, 255, 255));
+        Difficulty1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        Difficulty1.setForeground(new java.awt.Color(255, 255, 255));
         Difficulty1.setText("Difficulty:");
         jPanel1.add(Difficulty1);
         Difficulty1.setBounds(60, 220, 130, 15);
 
-        Difficulty.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        Difficulty.setForeground(new Color(255, 255, 255));
+        Difficulty.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        Difficulty.setForeground(new java.awt.Color(255, 255, 255));
         Difficulty.setText("[Difficulty]");
         jPanel1.add(Difficulty);
         Difficulty.setBounds(180, 220, 130, 15);
 
-        GasUsed1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        GasUsed1.setForeground(new Color(255, 255, 255));
+        GasUsed1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        GasUsed1.setForeground(new java.awt.Color(255, 255, 255));
         GasUsed1.setText("Gas Used:");
         jPanel1.add(GasUsed1);
         GasUsed1.setBounds(60, 240, 130, 15);
 
-        GasUsed.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        GasUsed.setForeground(new Color(255, 255, 255));
+        GasUsed.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        GasUsed.setForeground(new java.awt.Color(255, 255, 255));
         GasUsed.setText("[Gas]");
         jPanel1.add(GasUsed);
         GasUsed.setBounds(180, 240, 130, 15);
 
-        GasLimit1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        GasLimit1.setForeground(new Color(255, 255, 255));
+        GasLimit1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        GasLimit1.setForeground(new java.awt.Color(255, 255, 255));
         GasLimit1.setText("Gas Limit:");
         jPanel1.add(GasLimit1);
         GasLimit1.setBounds(60, 260, 130, 15);
 
-        GasLimit.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        GasLimit.setForeground(new Color(255, 255, 255));
+        GasLimit.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        GasLimit.setForeground(new java.awt.Color(255, 255, 255));
         GasLimit.setText("[GasLimit]");
         jPanel1.add(GasLimit);
         GasLimit.setBounds(180, 260, 130, 15);
@@ -221,38 +242,54 @@ public class BlockScreen extends JFrame {
         jPanel1.add(BackButton);
         BackButton.setBounds(1280, 730, 73, 23);
 
-        PHash1.setFont(new Font("Tahoma", 1, 12)); // NOI18N
-        PHash1.setForeground(new Color(255, 255, 255));
+        PHash1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        PHash1.setForeground(new java.awt.Color(255, 255, 255));
         PHash1.setText("Parent Hash:");
         jPanel1.add(PHash1);
         PHash1.setBounds(60, 140, 130, 15);
 
-        PHash.setFont(new Font("Tahoma", 0, 12)); // NOI18N
-        PHash.setForeground(new Color(255, 255, 255));
+        /*PHash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        PHash.setForeground(new java.awt.Color(255, 255, 255));
         PHash.setText("[ParentHash]");
         jPanel1.add(PHash);
-        PHash.setBounds(180, 140, 130, 15);
+        PHash.setBounds(180, 140, 130, 15);*/
 
-        Transactions.setFont(new Font("Tahoma", 1, 14)); // NOI18N
-        Transactions.setForeground(new Color(255, 255, 255));
+        Transactions.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        Transactions.setForeground(new java.awt.Color(255, 255, 255));
         Transactions.setText("Transactions:");
         jPanel1.add(Transactions);
         Transactions.setBounds(30, 290, 130, 17);
 
-        Background.setIcon(new ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanel1.add(jScrollPane1);
+        jScrollPane1.setBounds(60, 320, 452, 420);
+
+        Background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
         Background.setLabelFor(jPanel1);
         jPanel1.add(Background);
         Background.setBounds(0, 0, 1366, 768);
 
-        GroupLayout layout = new GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 1366, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1366, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
         );
 
         pack();
@@ -306,27 +343,29 @@ public class BlockScreen extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton BackButton;
-    private JLabel Background;
-    private JLabel Block;
-    private JLabel Block1;
-    private JLabel BlockDetails;
-    private JLabel Difficulty;
-    private JLabel Difficulty1;
-    private JLabel GasLimit;
-    private JLabel GasLimit1;
-    private JLabel GasUsed;
-    private JLabel GasUsed1;
-    private JLabel Hash;
-    private JLabel Hash1;
-    private JLabel Miner;
-    private JLabel Miner1;
-    private JLabel NoTrans;
-    private JLabel NoTrans1;
-    private JLabel PHash;
-    private JLabel PHash1;
-    private JLabel SkyScraper;
-    private JLabel Transactions;
-    private JPanel jPanel1;
+    private javax.swing.JButton BackButton;
+    private javax.swing.JLabel Background;
+    private javax.swing.JLabel Block;
+    private javax.swing.JLabel Block1;
+    private javax.swing.JLabel BlockDetails;
+    private javax.swing.JLabel Difficulty;
+    private javax.swing.JLabel Difficulty1;
+    private javax.swing.JLabel GasLimit;
+    private javax.swing.JLabel GasLimit1;
+    private javax.swing.JLabel GasUsed;
+    private javax.swing.JLabel GasUsed1;
+    private javax.swing.JLabel Hash;
+    private javax.swing.JLabel Hash1;
+    private javax.swing.JLabel Miner;
+    private javax.swing.JLabel Miner1;
+    private javax.swing.JLabel NoTrans;
+    private javax.swing.JLabel NoTrans1;
+    private javax.swing.JLabel PHash;
+    private javax.swing.JLabel PHash1;
+    private javax.swing.JLabel SkyScraper;
+    private javax.swing.JLabel Transactions;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
