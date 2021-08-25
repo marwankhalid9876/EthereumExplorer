@@ -166,7 +166,7 @@ public class EthereumExplorer {
                 case "erc721":
                     for(int i=0; i<selectElements.size(); i++)
                     {
-                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
+                        if(!selectElements.get(i).equals("fromaccount") && !selectElements.get(i).equals("toaccount") &&
                                 !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("id") && !selectElements.get(i).equals("*"))
                         {
 
@@ -177,8 +177,8 @@ public class EthereumExplorer {
                     {
                         if(!(sqltermsArray[i] instanceof Condition))
                         {
-                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("from") &&
-                                    !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
+                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("fromaccount") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("toaccount") &&
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
 
                                     throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'! ");
@@ -193,7 +193,7 @@ public class EthereumExplorer {
                 case "erc20":
                     for(int i=0; i<selectElements.size(); i++)
                     {
-                        if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
+                        if(!selectElements.get(i).equals("fromaccount") && !selectElements.get(i).equals("toaccount") &&
                                 !selectElements.get(i).equals("amount")&& !((Condition)sqltermsArray[i]).getAttribute().equals("*"))
                         {
 
@@ -205,8 +205,8 @@ public class EthereumExplorer {
                     {
                         if(!(sqltermsArray[i] instanceof Condition))
                         {
-                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("from") &&
-                                    !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
+                            if(!((Condition)sqltermsArray[i]).getAttribute().equals("fromaccount") &&
+                                    !((Condition)sqltermsArray[i]).getAttribute().equals("toaccount") &&
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
 
                                     throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'!");
@@ -292,12 +292,15 @@ public class EthereumExplorer {
                 //if the where condition was true for this transaction
                 if(conditionsResult(conditionsSatisfied))
                 {
-                    filteredList.add(new ArrayList<>());
                     //case1: selectElements contains only *
                     if(selectElements.get(0).equals("*"))
+                    {
+                        filteredList.add(new ArrayList<>());
                         filteredList.get(filteredList.size()-1).add(t);
+                        filteredList.get(filteredList.size()-1).add(t);
+                    }
                     else //case2: there are select elements
-                        filteredList.get(filteredList.size()-1).add(selectElementsValuesForTransaction(t,selectElements));
+                        filteredList.add(selectElementsValuesForTransaction(t,selectElements));
                 }
             }
             current = getPreviousBlock(current);
@@ -443,6 +446,7 @@ public class EthereumExplorer {
                 {
                     filteredList.add(new ArrayList<>());
                     filteredList.get(filteredList.size()-1).add(current);
+                    filteredList.get(filteredList.size()-1).add(current);
                 }
                 else //case2: there are select elements
                     filteredList.add(selectElementsValuesForBlock(current,selectElements));
@@ -512,6 +516,7 @@ public class EthereumExplorer {
                                         if(selectElements.get(0).equals("*"))
                                         {
                                             R.add(new ArrayList<>());
+                                            R.get(R.size()-1).add(n);
                                             R.get(R.size()-1).add(n);
                                         }
                                         else //case2: there are select elements
@@ -599,6 +604,8 @@ public class EthereumExplorer {
                                         {
                                             R.add(new ArrayList<>());
                                             R.get(R.size()-1).add(n);
+                                            R.get(R.size()-1).add(n);
+
                                         }
                                         else //case2: there are select elements
                                             R.add(selectElementsValuesForERC721(n,selectElements));
