@@ -161,6 +161,8 @@ public class AdvancedScreen extends JFrame {
         setVisible(false);
     }//GEN-LAST:event_BackButtonActionPerformed
 
+
+
     /**
      * @param args the command line arguments
      */

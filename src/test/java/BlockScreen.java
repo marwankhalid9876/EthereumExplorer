@@ -39,9 +39,9 @@ public class BlockScreen extends JFrame {
         EthBlock.Block b = EthereumExplorer.getBlockbyHash(key);
         Block.setText(b.getNumber()+"");
         Difficulty.setText(b.getDifficulty()+"");
-        PHash.setText(b.getParentHash());
+        PHash.setText(b.getParentHash()+"");
         NoTrans.setText(b.getTransactions().size()+"");
-        Miner.setText(b.getMiner());
+        Miner.setText(b.getMiner()+"");
         GasLimit.setText(b.getGasLimit()+"");
         GasUsed.setText(b.getGasUsed()+"");
         Background.setLayout(null);
@@ -68,9 +68,9 @@ public class BlockScreen extends JFrame {
         EthBlock.Block b = EthereumExplorer.getBlockbyNumber(num);
         Hash.setText(b.getHash());
         Difficulty.setText(b.getDifficulty()+"");
-        PHash.setText(b.getParentHash());
+        PHash.setText(b.getParentHash()+"");
         NoTrans.setText(b.getTransactions().size()+"");
-        Miner.setText(b.getMiner());
+        Miner.setText(b.getMiner()+"");
         GasLimit.setText(b.getGasLimit()+"");
         GasUsed.setText(b.getGasUsed()+"");
         Background.setLayout(null);
@@ -153,7 +153,7 @@ public class BlockScreen extends JFrame {
         Hash.setForeground(new java.awt.Color(255, 255, 255));
         Hash.setText("[Hash]");
         jPanel1.add(Hash);
-        Hash.setBounds(180, 120, 130, 15);
+        Hash.setBounds(180, 120, 330, 15);
 
         BlockDetails.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         BlockDetails.setForeground(new java.awt.Color(255, 255, 255));
@@ -195,7 +195,7 @@ public class BlockScreen extends JFrame {
         Miner.setForeground(new java.awt.Color(255, 255, 255));
         Miner.setText("[Miner]");
         jPanel1.add(Miner);
-        Miner.setBounds(180, 200, 130, 15);
+        Miner.setBounds(180, 200, 330, 15);
 
         Difficulty1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         Difficulty1.setForeground(new java.awt.Color(255, 255, 255));
@@ -248,11 +248,11 @@ public class BlockScreen extends JFrame {
         jPanel1.add(PHash1);
         PHash1.setBounds(60, 140, 130, 15);
 
-        /*PHash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        PHash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         PHash.setForeground(new java.awt.Color(255, 255, 255));
         PHash.setText("[ParentHash]");
         jPanel1.add(PHash);
-        PHash.setBounds(180, 140, 130, 15);*/
+        PHash.setBounds(180, 140, 330, 15);
 
         Transactions.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         Transactions.setForeground(new java.awt.Color(255, 255, 255));
