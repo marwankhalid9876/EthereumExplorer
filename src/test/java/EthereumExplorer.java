@@ -167,11 +167,10 @@ public class EthereumExplorer {
                     for(int i=0; i<selectElements.size(); i++)
                     {
                         if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
-                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("id"))
+                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("id") && !selectElements.get(i).equals("*"))
                         {
 
-                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount' or 'id'! ");
-
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount' or 'id' or '*'! ");
                         }
                     }
                     for(int i=0; i<sqltermsArray.length; i++)
@@ -195,10 +194,10 @@ public class EthereumExplorer {
                     for(int i=0; i<selectElements.size(); i++)
                     {
                         if(!selectElements.get(i).equals("from") && !selectElements.get(i).equals("to") &&
-                                !selectElements.get(i).equals("amount"))
+                                !selectElements.get(i).equals("amount")&& !((Condition)sqltermsArray[i]).getAttribute().equals("*"))
                         {
 
-                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount'! ");
+                                throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount' or '*'! ");
 
                         }
                     }
@@ -210,7 +209,7 @@ public class EthereumExplorer {
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("to") &&
                                     !((Condition)sqltermsArray[i]).getAttribute().equals("amount"))
 
-                                    throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'! ");
+                                    throw new ExplorerException("A valid select element must be 'toAccount' or 'fromAccount' or 'amount'!");
 
                         }
                     }
@@ -273,18 +272,14 @@ public class EthereumExplorer {
 
     public static ArrayList<ArrayList> queryTransactions(Object[] conditions, ArrayList<String> selectElements) throws IOException, ExecutionException, InterruptedException, ExplorerException {
         EthBlock.Block current = getLastBlock();
-        System.out.println("Block " +  getLastBlock().getNumber());
         int j=0;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
-        filteredList.add(MyListener.selectElements);
+        filteredList.add(selectElements);
         do{
-//            if(j%50==0)
-//               System.out.println(current.getNumber());
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
                 Transaction t = (Transaction) bigList.get(i).get();
                 Vector<Object> conditionsSatisfied = new Vector<>();
-//                System.out.println(t.getHash() + " " + t.getValue());
                 for(int k=0; k<conditions.length; k++)
                 {
                     if(conditions[k] instanceof Condition)
@@ -335,8 +330,9 @@ public class EthereumExplorer {
         conditionsSatisfied.add(i,conditionsResult(toBeEvaluated));
     }
 
-    private static ArrayList<String> selectElementsValuesForTransaction(Transaction t, ArrayList<String> selectElements) throws ExplorerException {
-        ArrayList<String> selectValues = new ArrayList<>();
+    private static ArrayList<Object> selectElementsValuesForTransaction(Transaction t, ArrayList<String> selectElements) throws ExplorerException {
+        ArrayList<Object> selectValues = new ArrayList<>();
+        selectValues.add(t);
         for(int i=0; i<selectElements.size(); i++)
         {
             switch(selectElements.get(i))
@@ -423,7 +419,7 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent;
         ArrayList<ArrayList> filteredList = new ArrayList<>();
-        filteredList.add(MyListener.selectElements);
+        filteredList.add(selectElements);
         int j=0;
         do{
             oldCurrent = current;
@@ -459,6 +455,7 @@ public class EthereumExplorer {
 
     public static ArrayList<Object> selectElementsValuesForBlock(EthBlock.Block c, ArrayList<String> selectElements) throws ExplorerException {
         ArrayList<Object> selectValues = new ArrayList<>();
+        selectValues.add(c);
         for(int i=0; i<selectElements.size(); i++)
         {
             switch(selectElements.get(i))
@@ -486,7 +483,7 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
         ArrayList<ArrayList> R = new ArrayList<ArrayList>();
-        R.add(MyListener.selectElements);
+        R.add(selectElements);
         do{
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
@@ -528,7 +525,8 @@ public class EthereumExplorer {
     }
 
     private static ArrayList selectElementsValuesForERC20(cERC20 n, ArrayList selectElements) throws ExplorerException {
-        ArrayList<String> selectValues = new ArrayList<>();
+        ArrayList<Object> selectValues = new ArrayList<>();
+        selectValues.add(n);
         for(int i=0; i<selectElements.size(); i++)
         {
             switch(selectElements.get(i).toString())
@@ -559,8 +557,7 @@ public class EthereumExplorer {
         EthBlock.Block current = getLastBlock();
         EthBlock.Block oldCurrent = current;
         ArrayList<ArrayList> R = new ArrayList<ArrayList>();
-        R.add(MyListener.selectElements);
-
+        R.add(selectElements);
         do{
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
 
@@ -631,7 +628,8 @@ public class EthereumExplorer {
     }
 
     private static ArrayList selectElementsValuesForERC721(cERC721 n, ArrayList selectElements) throws ExplorerException {
-        ArrayList<String> selectValues = new ArrayList<>();
+        ArrayList<Object> selectValues = new ArrayList<>();
+        selectValues.add(n);
         for(int i=0; i<selectElements.size(); i++)
         {
             switch(selectElements.get(i).toString())
@@ -728,7 +726,7 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException, ExplorerException {
-//        ArrayList<ArrayList> arr = parse("select from transaction");
+//        ArrayList<ArrayList> arr = parse("select difficulty from block");
 //        System.out.println(arr.size());
 //        int i=0;
 //        for(Object selectElement : arr)
@@ -755,7 +753,7 @@ public class EthereumExplorer {
         Condition condition = new Condition("amount", ">", "0");
 
         ArrayList conditions = new ArrayList();
-        conditions.add(condition);
+//        conditions.add(condition);
 
         // ArrayList<cERC20>a=null;
         ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
@@ -763,7 +761,7 @@ public class EthereumExplorer {
         System.out.println(a.size());
 //        System.out.println(a);
         for (int i=0;i<a.size();i++){
-            System.out.println(a.get(i));
+            System.out.println(i + "" + a.get(i));
         }
     }
 }
