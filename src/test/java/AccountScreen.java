@@ -47,7 +47,6 @@ public class AccountScreen extends JFrame {
         Hash.setText(a.hash);
         BigInteger result = EthereumExplorer.getAccountBalanceByAddress(a.hash);
         Balance.setText(result+" Wei");
-        Dollars.setText(Convert.fromWei(String.valueOf(result), Convert.Unit.WEI)+"$");
         revalidate();
         repaint();
     }
@@ -84,17 +83,17 @@ public class AccountScreen extends JFrame {
         jPanel1.add(SkyScraper);
         SkyScraper.setBounds(30, 20, 190, 42);
 
-        Transactions.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        Transactions.setForeground(new java.awt.Color(255, 255, 255));
-        Transactions.setText("Transactions:");
-        jPanel1.add(Transactions);
-        Transactions.setBounds(30, 190, 130, 17);
-
-        Dollars.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        Dollars.setForeground(new java.awt.Color(255, 255, 255));
-        Dollars.setText("[Dollars]");
-        jPanel1.add(Dollars);
-        Dollars.setBounds(180, 160, 260, 15);
+//        Transactions.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+//        Transactions.setForeground(new java.awt.Color(255, 255, 255));
+//        Transactions.setText("Transactions:");
+//        jPanel1.add(Transactions);
+//        Transactions.setBounds(30, 190, 130, 17);
+//
+//        Dollars.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+//        Dollars.setForeground(new java.awt.Color(255, 255, 255));
+//        Dollars.setText("[Dollars]");
+//        jPanel1.add(Dollars);
+//        Dollars.setBounds(180, 160, 260, 15);
 
         Hash.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         Hash.setForeground(new java.awt.Color(255, 255, 255));
@@ -114,11 +113,11 @@ public class AccountScreen extends JFrame {
         jPanel1.add(Hash1);
         Hash1.setBounds(60, 120, 130, 15);
 
-        ValueDollars.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        ValueDollars.setForeground(new java.awt.Color(255, 255, 255));
-        ValueDollars.setText("Value In Dollars:");
-        jPanel1.add(ValueDollars);
-        ValueDollars.setBounds(60, 160, 130, 15);
+//        ValueDollars.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+//        ValueDollars.setForeground(new java.awt.Color(255, 255, 255));
+//        ValueDollars.setText("Value In Dollars:");
+//        jPanel1.add(ValueDollars);
+//        ValueDollars.setBounds(60, 160, 130, 15);
 
         Balance2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         Balance2.setForeground(new java.awt.Color(255, 255, 255));

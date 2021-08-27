@@ -30,9 +30,12 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         showhide.setBorderPainted(false);
         showhide.setIcon(shower);
         ExPosBox.setVisible(false);
-        TypeL5.setVisible(false);
+        TypeL4.setVisible(false);
         AddButton.setVisible(false);
         X2Label.setVisible(false);
+        TypeL1.setVisible(false);
+        TypeL.setVisible(false);
+        FormatBox.setVisible(false);
         showhide.addActionListener(this);
         Background.setLayout(null);
         Background.add(showhide);
@@ -107,7 +110,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Search For Contract");
+        jLabel1.setText("Search For Token");
         jPanel1.add(jLabel1);
         jLabel1.setBounds(30, 260, 230, 30);
 
@@ -248,7 +251,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         ValPosBox.setBounds(430, 380, 110, 40);
 
         TypeL4.setForeground(new java.awt.Color(255, 255, 255));
-        TypeL4.setText("Amount Position:");
+        TypeL4.setText("ID Position:");
         jPanel1.add(TypeL4);
         TypeL4.setBounds(330, 390, 160, 20);
 
@@ -306,12 +309,8 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         EnterSearchTerm3.setVisible(toset);
         SearchBox3.setVisible(toset);
         jButton3.setVisible(toset);
-        FormatBox.setVisible(toset);
-        TypeL.setVisible(toset);
-        TypeL1.setVisible(toset);
         TypeL2.setVisible(toset);
         TypeL3.setVisible(toset);
-        TypeL4.setVisible(toset);
         TypeL5.setVisible(toset);
         AddPosBox1.setVisible(toset);
         ValPosBox.setVisible(toset);
@@ -407,9 +406,28 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         ArrayList<String> ty = new ArrayList<String>();
         ArrayList<String> M = new ArrayList<String>();
         ArrayList<String> caa = new ArrayList<String>();
-        x.add(Integer.parseInt(AddPosBox1.getText()));
-        x.add(Integer.parseInt(ValPosBox.getText()));
-        x2.add(Integer.parseInt(ValPosBox.getText()));
+        if(!SearchBox3.getText().contains("erc")){
+            JOptionPane.showMessageDialog(this,"Please enter a valid token query");
+            return;
+        }
+        try {
+            x.add(Integer.parseInt(AddPosBox1.getText()));
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this,"Address Position must be a number!");
+            return;
+        }
+        try {
+            x.add(Integer.parseInt(ValPosBox.getText()));
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this,"ID Position must be a number!");
+            return;
+        }
+        try {
+            x2.add(Integer.parseInt(ValPosBox.getText()));
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this,"ID Position must be a number!");
+            return;
+        }
         ty.add("address");
         ty.add("num");
         M.add(MethodBox.getText());
@@ -422,9 +440,11 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         stuff.add(M);
         stuff.add(caa);
         try {
-            AdvancedScreen as = new AdvancedScreen(SearchBox3.getText(),this,FormatBox.getSelectedItem().equals("ERC-20")?1:2,stuff);
+            AdvancedScreen as = new AdvancedScreen(SearchBox3.getText(), this, SearchBox3.getText().contains("erc20") ? 1 : 2, stuff);
             as.setVisible(true);
             setVisible(false);
+        } catch(ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
