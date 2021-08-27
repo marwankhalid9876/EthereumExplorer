@@ -25,15 +25,29 @@ public class EthereumExplorer {
     public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(12000000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(1000000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
 
-    public static Transaction getTransactionByHash(String key) throws IOException {
-        Transaction t = null;
-        t = web3.ethGetTransactionByHash(key).send().getResult();
-        return t;
+    public static Transaction getTransactionByHash(String key) throws IOException, InterruptedException, ExecutionException {
+        EthBlock.Block current = getLastBlock();
+        EthBlock.Block oldCurrent;
+        ArrayList<ArrayList> filteredList = new ArrayList<>();
+        int j=0;
+        do{
+            oldCurrent = current;
+            List<EthBlock.TransactionResult> bigList = current.getTransactions();
+            for(int i = 0; i < bigList.size(); i++) {
+                Transaction t = (Transaction) bigList.get(i).get();
+                if(t.getHash().equals(key))
+                    return t;
+            }
+
+            j++;
+            current = getPreviousBlock(current);
+        }while(!(current.getParentHash().equals("0x0000000000000000000000000000000000000000000000000000000000000000"))&& j<25);
+        return null;
     }
 
     public static EthTransaction searchTransactionByHash (EthBlock.Block block,String hash) throws ExecutionException, InterruptedException {
@@ -741,34 +755,35 @@ public class EthereumExplorer {
 //            i++;
 //            System.out.println((i) + "" + selectElement);
 //        }
-        ArrayList<Integer> x=new ArrayList<>();
-        ArrayList<Integer> y=new ArrayList<>();
-        ArrayList<String> ty=new ArrayList<>();
-        x.add(1);
-        y.add(2);
-        ty.add("address");
-        ty.add("num");
-        x.add(2);
-
-        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
-        ArrayList<String> mm=new ArrayList<>();
-        mm.add("0x23b872dd");
-        mm.add("0xab834bab");
-
-        ArrayList selectElements = new ArrayList();
-        selectElements.add("*");
-        Condition condition = new Condition("amount", ">", "0");
-
-        ArrayList conditions = new ArrayList();
-//        conditions.add(condition);
-
-        // ArrayList<cERC20>a=null;
-        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
-
-        System.out.println(a.size());
-//        System.out.println(a);
-        for (int i=0;i<a.size();i++){
-            System.out.println(i + "" + a.get(i));
-        }
+//        ArrayList<Integer> x=new ArrayList<>();
+//        ArrayList<Integer> y=new ArrayList<>();
+//        ArrayList<String> ty=new ArrayList<>();
+//        x.add(1);
+//        y.add(2);
+//        ty.add("address");
+//        ty.add("num");
+//        x.add(2);
+//
+//        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
+//        ArrayList<String> mm=new ArrayList<>();
+//        mm.add("0x23b872dd");
+//        mm.add("0xab834bab");
+//
+//        ArrayList selectElements = new ArrayList();
+//        selectElements.add("*");
+//        Condition condition = new Condition("amount", ">", "0");
+//
+//        ArrayList conditions = new ArrayList();
+////        conditions.add(condition);
+//
+//        // ArrayList<cERC20>a=null;
+//        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
+//
+//        System.out.println(a.size());
+////        System.out.println(a);
+//        for (int i=0;i<a.size();i++){
+//            System.out.println(i + "" + a.get(i));
+//        }
+        System.out.println(getTransactionByHash("0xe9e91f1ee4b56c0df2e9f06c2b8c27c6076195a88a7b8537ba8313d80e6f124e"));
     }
 }
