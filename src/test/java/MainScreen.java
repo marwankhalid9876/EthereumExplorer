@@ -6,6 +6,8 @@
 
 //import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
+import org.web3j.exceptions.MessageDecodingException;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -311,6 +313,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         jButton3.setVisible(toset);
         TypeL2.setVisible(toset);
         TypeL3.setVisible(toset);
+        TypeL4.setVisible(toset);
         TypeL5.setVisible(toset);
         AddPosBox1.setVisible(toset);
         ValPosBox.setVisible(toset);
@@ -330,8 +333,12 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         BlockScreen bc = null;
         if(SearchForBox.getSelectedItem().equals("Account")) {
             try {
-                ac = new AccountScreen(SearchBox1.getText(),this);
+                ac = new AccountScreen(SearchBox1.getText(), this);
                 ac.setVisible(true);
+            } catch (MessageDecodingException|NullPointerException e){
+                JOptionPane.showMessageDialog(this,"Please enter a proper account hash");
+                this.setVisible(true);
+                return;
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -344,6 +351,10 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             try {
                 tc = new TransactionScreen(SearchBox1.getText(),this);
                 tc.setVisible(true);
+            } catch (MessageDecodingException|NullPointerException e){
+                JOptionPane.showMessageDialog(this,"Please enter a proper transaction hash");
+                this.setVisible(true);
+                return;
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -361,6 +372,10 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
                     bc = new BlockScreen(SearchBox1.getText(), this);
                 }
                 bc.setVisible(true);
+            } catch (MessageDecodingException|NullPointerException e){
+                JOptionPane.showMessageDialog(this,"Please enter a proper block identifier");
+                this.setVisible(true);
+                return;
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
