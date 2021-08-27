@@ -225,7 +225,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         TypeL2.setForeground(new java.awt.Color(255, 255, 255));
         TypeL2.setText("Address Position:");
         jPanel1.add(TypeL2);
-        TypeL2.setBounds(30, 390, 160, 20);
+        TypeL2.setBounds(30, 350, 160, 20);
 
         HashBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -233,12 +233,12 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(HashBox);
-        HashBox.setBounds(140, 430, 400, 40);
+        HashBox.setBounds(140, 390, 400, 40);
 
         TypeL3.setForeground(new java.awt.Color(255, 255, 255));
         TypeL3.setText("Contract Hash:");
         jPanel1.add(TypeL3);
-        TypeL3.setBounds(30, 440, 160, 20);
+        TypeL3.setBounds(30, 400, 160, 20);
 
         MethodBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -246,7 +246,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(MethodBox);
-        MethodBox.setBounds(140, 480, 400, 40);
+        MethodBox.setBounds(140, 440, 400, 40);
 
         MethodBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -254,7 +254,7 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(MethodBox1);
-        MethodBox1.setBounds(140, 530, 400, 40);
+        MethodBox1.setBounds(140, 490, 400, 40);
 
         ValPosBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -262,12 +262,12 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(ValPosBox);
-        ValPosBox.setBounds(430, 380, 110, 40);
+        ValPosBox.setBounds(430, 340, 110, 40);
 
         TypeL4.setForeground(new java.awt.Color(255, 255, 255));
         TypeL4.setText("ID Position:");
         jPanel1.add(TypeL4);
-        TypeL4.setBounds(330, 390, 160, 20);
+        TypeL4.setBounds(360, 350, 160, 20);
 
         ExPosBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -275,12 +275,12 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(ExPosBox);
-        ExPosBox.setBounds(140, 590, 110, 40);
+        ExPosBox.setBounds(140, 550, 110, 40);
 
         TypeL5.setForeground(new java.awt.Color(255, 255, 255));
         TypeL5.setText("Method Names:");
         jPanel1.add(TypeL5);
-        TypeL5.setBounds(30, 490, 160, 20);
+        TypeL5.setBounds(30, 450, 160, 20);
 
         AddPosBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -288,16 +288,16 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
             }
         });
         jPanel1.add(AddPosBox1);
-        AddPosBox1.setBounds(140, 380, 110, 40);
+        AddPosBox1.setBounds(140, 340, 110, 40);
 
         AddButton.setText("Add");
         jPanel1.add(AddButton);
-        AddButton.setBounds(270, 600, 51, 23);
+        AddButton.setBounds(270, 560, 51, 23);
 
         X2Label.setForeground(new java.awt.Color(255, 255, 255));
         X2Label.setText("[ExtraPositions]");
         jPanel1.add(X2Label);
-        X2Label.setBounds(340, 610, 90, 14);
+        X2Label.setBounds(340, 570, 90, 14);
 
         Background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/etherbkg.png"))); // NOI18N
         Background.setLabelFor(jPanel1);
