@@ -42,6 +42,18 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
         Background.setLayout(null);
         Background.add(showhide);
         showhide.setBounds(5,260,30,30);
+        helpbutt = new JButton();
+        helpbutt.setContentAreaFilled(false);
+        helpbutt.setBorderPainted(false);
+        helpbutt.setIcon(helpicon);
+        Background.add(helpbutt);
+        helpbutt.setBounds(1300,5,50,50);
+        helpbutt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new HelpScreen().setVisible(true);
+            }
+        });
         ShowOrHide();
     }
 
@@ -568,8 +580,10 @@ public class MainScreen extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
     private JButton showhide;
+    private JButton helpbutt;
     private ImageIcon shower = new ImageIcon(getClass().getResource("/triangle-right-arrow.png"));
     private ImageIcon hider = new ImageIcon(getClass().getResource("/drop-down-arrow.png"));
+    private ImageIcon helpicon = new ImageIcon(getClass().getResource("/helpbutton.png"));
 
     @Override
     public void actionPerformed(ActionEvent e) {
