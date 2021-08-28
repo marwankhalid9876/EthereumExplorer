@@ -22,10 +22,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
+    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
-        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(1000000)),true).send();
+        EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(12000000)),true).send();
         EthBlock.Block block = b.getBlock();
         return block;
     }
@@ -208,7 +208,7 @@ public class EthereumExplorer {
                     for(int i=0; i<selectElements.size(); i++)
                     {
                         if(!selectElements.get(i).equals("fromaccount") && !selectElements.get(i).equals("toaccount") &&
-                                !selectElements.get(i).equals("amount")&& !((Condition)sqltermsArray[i]).getAttribute().equals("*"))
+                                !selectElements.get(i).equals("amount") && !selectElements.get(i).equals("*") )
                         {
 
                                 throw new ExplorerException("A valid select element for a token query must be 'toAccount' or 'fromAccount' or 'amount' or '*'! ");
@@ -503,6 +503,7 @@ public class EthereumExplorer {
         ArrayList<ArrayList> R = new ArrayList<ArrayList>();
         R.add(selectElements);
         do{
+            System.out.println(j);
             List<EthBlock.TransactionResult> bigList = current.getTransactions();
             for(int i = 0; i < bigList.size(); i++){
                 Transaction t = (Transaction) bigList.get(i).get();
@@ -538,7 +539,9 @@ public class EthereumExplorer {
                                     }
                                 }
                             }
-            }}
+            }
+            j++;
+        }
         while((current = getPreviousBlock(current)) != oldCurrent && j<25);
         return R;
     }
@@ -747,43 +750,29 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException, ExplorerException {
-//        ArrayList<ArrayList> arr = parse("select difficulty from block");
-//        System.out.println(arr.size());
-//        int i=0;
-//        for(Object selectElement : arr)
-//        {
-//            i++;
-//            System.out.println((i) + "" + selectElement);
-//        }
-//        ArrayList<Integer> x=new ArrayList<>();
-//        ArrayList<Integer> y=new ArrayList<>();
-//        ArrayList<String> ty=new ArrayList<>();
-//        x.add(1);
-//        y.add(2);
-//        ty.add("address");
-//        ty.add("num");
-//        x.add(2);
-//
-//        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
-//        ArrayList<String> mm=new ArrayList<>();
-//        mm.add("0x23b872dd");
-//        mm.add("0xab834bab");
-//
-//        ArrayList selectElements = new ArrayList();
-//        selectElements.add("*");
-//        Condition condition = new Condition("amount", ">", "0");
-//
-//        ArrayList conditions = new ArrayList();
-////        conditions.add(condition);
-//
-//        // ArrayList<cERC20>a=null;
-//        ArrayList<ArrayList>a=summary721(x,y,ty,mm,"0x7be8076f4ea4a4ad08075c2508e481d6c946d12b",selectElements,conditions);
-//
-//        System.out.println(a.size());
-////        System.out.println(a);
-//        for (int i=0;i<a.size();i++){
-//            System.out.println(i + "" + a.get(i));
-//        }
-        System.out.println(getTransactionByHash("0xe9e91f1ee4b56c0df2e9f06c2b8c27c6076195a88a7b8537ba8313d80e6f124e"));
+        ArrayList<Integer> x=new ArrayList<>();
+        ArrayList<Integer> y=new ArrayList<>();
+        ArrayList<String> ty=new ArrayList<>();
+        x.add(0);
+        y.add(2);
+        ty.add("address");
+        ty.add("num");
+        x.add(1);
+        String m="0xa9059cbb";
+        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
+        ArrayList<String> mm=new ArrayList<>();
+        mm.add("0x23b872dd");
+        mm.add("0xab834bab");
+
+        // ArrayList<cERC20>a=null;
+        ArrayList condition = new ArrayList();
+        ArrayList selectElements = new ArrayList();
+        selectElements.add("*");
+        ArrayList a=summary20(x,ty,"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",m, selectElements, condition);
+        System.out.println(a.size());
+        for (int i=0;i<a.size();i++){
+            System.out.println(a.get(i));
+        }
+        return;
     }
 }
