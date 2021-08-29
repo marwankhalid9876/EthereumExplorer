@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class EthereumExplorer {
-    public static Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
+    public static Web3j web3 = Web3j.build(new HttpService("https://main-light.eth.linkpool.io"));
 
     public static EthBlock.Block getLastBlock() throws InterruptedException, IOException {
         EthBlock b = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(BigInteger.valueOf(12000000)),true).send();
@@ -750,29 +750,29 @@ public class EthereumExplorer {
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException, ExplorerException {
-        ArrayList<Integer> x=new ArrayList<>();
-        ArrayList<Integer> y=new ArrayList<>();
-        ArrayList<String> ty=new ArrayList<>();
-        x.add(0);
-        y.add(2);
-        ty.add("address");
-        ty.add("num");
-        x.add(1);
-        String m="0xa9059cbb";
-        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
-        ArrayList<String> mm=new ArrayList<>();
-        mm.add("0x23b872dd");
-        mm.add("0xab834bab");
-
-        // ArrayList<cERC20>a=null;
-        ArrayList condition = new ArrayList();
-        ArrayList selectElements = new ArrayList();
-        selectElements.add("*");
-        ArrayList a=summary20(x,ty,"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",m, selectElements, condition);
-        System.out.println(a.size());
-        for (int i=0;i<a.size();i++){
-            System.out.println(a.get(i));
-        }
-        return;
+//        ArrayList<Integer> x=new ArrayList<>();
+//        ArrayList<Integer> y=new ArrayList<>();
+//        ArrayList<String> ty=new ArrayList<>();
+//        x.add(0);
+//        y.add(2);
+//        ty.add("address");
+//        ty.add("num");
+//        x.add(1);
+//        String m="0xa9059cbb";
+//        //System.out.println(fetchcontractdata(x,tt.send().getTransaction().get(),ty));
+//        ArrayList<String> mm=new ArrayList<>();
+//        mm.add("0x23b872dd");
+//        mm.add("0xab834bab");
+//
+//        // ArrayList<cERC20>a=null;
+//        ArrayList condition = new ArrayList();
+//        ArrayList selectElements = new ArrayList();
+//        selectElements.add("*");
+//        ArrayList a=summary20(x,ty,"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",m, selectElements, condition);
+//        System.out.println(a.size());
+//        for (int i=0;i<a.size();i++){
+//            System.out.println(a.get(i));
+//        }
+//        return;
     }
 }
